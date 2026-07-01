@@ -1,0 +1,17 @@
+# Docker Compose configuration for WildSight.
+# This file will evolve as services are introduced throughout development.
+
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: wildsight-backend
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: wildsight-frontend
