@@ -1,60 +1,101 @@
 # WildSight
 
-WildSight is a full-stack wildlife observation, analytics, and prediction platform. It enables users to record wildlife sightings, enrich observations with environmental data, and generate insights that help predict when and where species are most likely to be observed.
+## Project Overview
 
-The project is designed with scalability in mind. Although the initial focus is on bird observations, the architecture is built to support all wildlife, including mammals, reptiles, amphibians, insects, marine life, and plants.
+WildSight is a full-stack wildlife observation, analytics, and prediction platform designed to help users record, explore, and understand wildlife sightings.
 
-## Features (Planned)
+The project begins with bird observations but is architected to support all wildlife, including mammals, reptiles, amphibians, insects, marine life, and plants. Each observation will eventually be enriched with environmental data such as weather, habitat, season, and location to provide deeper insights and power machine learning models that predict the likelihood of observing particular species under specific conditions.
 
-* Record and manage wildlife observations
-* Interactive maps and observation hotspots
-* Environmental data enrichment (weather, season, habitat, etc.)
-* Species analytics and reporting
-* Machine learning prediction engine
-* Community observation sharing
-
-## Technology Stack
-
-### Frontend
-
-* React
-* TypeScript
-* Tailwind CSS
-
-### Backend
-
-* FastAPI
-* Python
-
-### Database
-
-* PostgreSQL
-* PostGIS
-
-### Data Engineering
-
-* Python ETL pipelines
-* Feature engineering
-* Scheduled data processing
-
-### Machine Learning
-
-* scikit-learn
-
-### DevOps
-
-* Docker
-* Docker Compose
-* GitHub Actions (planned)
+WildSight is being developed as a production-quality software engineering portfolio project with an emphasis on scalable architecture, maintainable code, clean design, and modern development practices.
 
 ---
 
-## Getting Started
+## Features
+
+### Current
+- Dockerized development environment
+- FastAPI backend
+- React frontend
+- PostgreSQL database
+- Modular project structure
+
+### Planned
+- Wildlife observation logging
+- User authentication
+- Interactive maps
+- Observation hotspots
+- Environmental data enrichment
+- Species analytics dashboard
+- Machine learning sighting predictions
+- Community observation sharing
+
+---
+
+## Tech Stack
+
+### Frontend
+- React
+- TypeScript
+- Tailwind CSS
+
+### Backend
+- FastAPI
+- Python
+
+### Database
+- PostgreSQL
+- PostGIS
+
+### Data Engineering
+- Python
+- ETL Pipelines
+- Feature Engineering
+
+### Machine Learning
+- scikit-learn
+
+### DevOps
+- Docker
+- Docker Compose
+- GitHub Actions (planned)
+
+---
+
+## Architecture
+
+WildSight follows a modular full-stack architecture.
+
+```text
+                +------------------+
+                |      React       |
+                |    Frontend      |
+                +---------+--------+
+                          |
+                     REST API
+                          |
+                +---------v--------+
+                |     FastAPI      |
+                |     Backend      |
+                +---------+--------+
+                          |
+                  SQLAlchemy ORM
+                          |
+                +---------v--------+
+                |   PostgreSQL     |
+                |    + PostGIS     |
+                +------------------+
+```
+
+As the project evolves, additional services for environmental data ingestion, analytics, and machine learning will integrate with the backend.
+
+---
+
+## Setup Instructions
 
 ### Prerequisites
 
-* Docker Desktop
-* Git
+- Git
+- Docker Desktop
 
 ### Clone the Repository
 
@@ -81,7 +122,7 @@ docker compose up
 docker compose down
 ```
 
-To rebuild after dependency changes:
+### Rebuild After Dependency Changes
 
 ```bash
 docker compose up --build
@@ -89,28 +130,63 @@ docker compose up --build
 
 ---
 
-## Project Structure
+## Folder Structure
 
-```
+```text
 WildSight/
-├── backend/
-├── frontend/
-├── docs/
+│
+├── backend/              # FastAPI application
+│   ├── app/
+│   ├── requirements.txt
+│   └── Dockerfile
+│
+├── frontend/             # React application
+│   ├── src/
+│   ├── public/
+│   └── Dockerfile
+│
+├── docs/                 # Project documentation
+│
 ├── docker-compose.yml
 ├── .gitignore
-└── README.md
+├── README.md
+│
+└── .env.example
 ```
 
 ---
 
-## Project Status
+## Roadmap
 
-Active Development
+### Phase 1 — Foundation
+- [x] Repository setup
+- [x] Docker development environment
+- [x] Backend and frontend scaffolding
+- [ ] Database integration
+- [ ] Initial API endpoints
 
-WildSight is currently in the initial development phase. The current focus is establishing the project architecture, development environment, and core backend and frontend infrastructure.
+### Phase 2 — Observation Platform
+- [ ] Observation management
+- [ ] Species database
+- [ ] User authentication
 
----
+### Phase 3 — Mapping & Analytics
+- [ ] Interactive maps
+- [ ] Observation hotspots
+- [ ] Statistics dashboard
 
-## License
+### Phase 4 — Environmental Data
+- [ ] Weather integration
+- [ ] Habitat enrichment
+- [ ] Seasonal analysis
 
-This project is licensed under the MIT License.
+### Phase 5 — Machine Learning
+- [ ] Feature engineering pipeline
+- [ ] Prediction models
+- [ ] Sighting probability forecasts
+
+### Phase 6 — Community
+- [ ] Shared observations
+- [ ] User profiles
+- [ ] Leaderboards
+- [ ] Collaboration features
