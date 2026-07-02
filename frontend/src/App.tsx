@@ -1,11 +1,15 @@
-import './App.css'
+import Navbar from "./components/Navbar";
+import Hero from "./components/Hero";
+import StatsSection from "./components/StatsSection";
+import RecentSightings from "./components/RecentSightings";
 
 function App() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-green-100">
-      <h1 className="text-5xl font-bold text-green-700">
-        WildSight
-      </h1>
+    <div className="min-h-screen bg-slate-50">
+      <Navbar />
+      <Hero />
+      <StatsSection />
+      <RecentSightings />
     </div>
   );
 }
