@@ -1,7 +1,13 @@
+import AuthLayout from "../layouts/AuthLayout";
+
+import Card from "../components/ui/Card";
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
+
 function RegisterPage() {
   return (
-    <div className="flex min-h-[calc(100vh-80px)] items-center justify-center bg-slate-50 px-6 py-12">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
+    <AuthLayout>
+      <Card className="w-full max-w-md">
         <h1 className="mb-2 text-center text-3xl font-bold text-slate-900">
           Create an Account
         </h1>
@@ -11,73 +17,36 @@ function RegisterPage() {
         </p>
 
         <form className="space-y-5">
-          <div>
-            <label
-              htmlFor="name"
-              className="mb-2 block font-medium text-slate-700"
-            >
-              Full Name
-            </label>
+          <Input
+            id="name"
+            label="Full Name"
+            placeholder="John Smith"
+          />
 
-            <input
-              id="name"
-              type="text"
-              placeholder="John Smith"
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none transition focus:border-green-600"
-            />
-          </div>
+          <Input
+            id="email"
+            label="Email"
+            type="email"
+            placeholder="john@example.com"
+          />
 
-          <div>
-            <label
-              htmlFor="email"
-              className="mb-2 block font-medium text-slate-700"
-            >
-              Email
-            </label>
+          <Input
+            id="password"
+            label="Password"
+            type="password"
+            placeholder="Create a password"
+          />
 
-            <input
-              id="email"
-              type="email"
-              placeholder="john@example.com"
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none transition focus:border-green-600"
-            />
-          </div>
+          <Input
+            id="confirmPassword"
+            label="Confirm Password"
+            type="password"
+            placeholder="Confirm your password"
+          />
 
-          <div>
-            <label
-              htmlFor="password"
-              className="mb-2 block font-medium text-slate-700"
-            >
-              Password
-            </label>
-
-            <input
-              id="password"
-              type="password"
-              placeholder="Create a password"
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none transition focus:border-green-600"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="confirmPassword"
-              className="mb-2 block font-medium text-slate-700"
-            >
-              Confirm Password
-            </label>
-
-            <input
-              id="confirmPassword"
-              type="password"
-              placeholder="Confirm your password"
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none transition focus:border-green-600"
-            />
-          </div>
-
-          <button className="w-full rounded-lg bg-green-700 py-3 font-semibold text-white transition hover:bg-green-800">
+          <Button className="w-full">
             Create Account
-          </button>
+          </Button>
         </form>
 
         <p className="mt-6 text-center text-slate-600">
@@ -86,8 +55,8 @@ function RegisterPage() {
             Login
           </button>
         </p>
-      </div>
-    </div>
+      </Card>
+    </AuthLayout>
   );
 }
 

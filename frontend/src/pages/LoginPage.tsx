@@ -1,7 +1,13 @@
+import AuthLayout from "../layouts/AuthLayout";
+
+import Card from "../components/ui/Card";
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
+
 function LoginPage() {
   return (
-    <div className="flex min-h-[calc(100vh-80px)] items-center justify-center bg-slate-50 px-6">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
+    <AuthLayout>
+      <Card className="w-full max-w-md">
         <h1 className="mb-2 text-center text-3xl font-bold text-slate-900">
           Welcome Back
         </h1>
@@ -10,44 +16,24 @@ function LoginPage() {
           Sign in to continue exploring WildSight.
         </p>
 
-        <form className="space-y-6">
-          <div>
-            <label
-              htmlFor="email"
-              className="mb-2 block font-medium text-slate-700"
-            >
-              Email
-            </label>
+        <form className="space-y-5">
+          <Input
+            id="email"
+            label="Email"
+            type="email"
+            placeholder="Enter your email"
+          />
 
-            <input
-              id="email"
-              type="email"
-              placeholder="Enter your email"
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none transition focus:border-green-600"
-            />
-          </div>
+          <Input
+            id="password"
+            label="Password"
+            type="password"
+            placeholder="Enter your password"
+          />
 
-          <div>
-            <label
-              htmlFor="password"
-              className="mb-2 block font-medium text-slate-700"
-            >
-              Password
-            </label>
-
-            <input
-              id="password"
-              type="password"
-              placeholder="Enter your password"
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none transition focus:border-green-600"
-            />
-          </div>
-
-          <button
-            className="w-full rounded-lg bg-green-700 py-3 font-semibold text-white transition hover:bg-green-800"
-          >
+          <Button className="w-full">
             Login
-          </button>
+          </Button>
         </form>
 
         <div className="mt-6 text-center">
@@ -62,8 +48,8 @@ function LoginPage() {
             Sign Up
           </button>
         </p>
-      </div>
-    </div>
+      </Card>
+    </AuthLayout>
   );
 }
 

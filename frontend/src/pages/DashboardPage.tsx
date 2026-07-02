@@ -1,3 +1,14 @@
+import MainLayout from "../layouts/MainLayout";
+
+import Card from "../components/ui/Card";
+import Divider from "../components/ui/Divider";
+import PageHeader from "../components/ui/PageHeader";
+import Section from "../components/ui/Section";
+import StatCard from "../components/ui/StatCard";
+
+import MapPreview from "../components/MapPreview";
+import RecentSightings from "../components/RecentSightings";
+
 function DashboardPage() {
   const stats = [
     {
@@ -21,103 +32,85 @@ function DashboardPage() {
   const recentActivity = [
     "Cape Sugarbird • Table Mountain",
     "African Penguin • Boulders Beach",
-    "Malachite Kingfisher • Rondevlei",
+    "Malachite Kingfisher • Rondevlei Nature Reserve",
   ];
 
   return (
-    <main className="mx-auto max-w-7xl px-8 py-10">
+    <MainLayout>
+      <PageHeader
+        title="Dashboard"
+        subtitle="Ready for your next wildlife adventure?"
+      />
 
-      <div className="mb-10">
-        <h1 className="text-4xl font-bold">
-          Welcome back 👋
-        </h1>
-
-        <p className="mt-2 text-slate-600">
-          Ready for your next wildlife adventure?
-        </p>
-      </div>
-
-      <section className="mb-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-
-        {stats.map((stat) => (
-          <div
-            key={stat.title}
-            className="rounded-xl bg-white p-6 shadow"
-          >
-            <p className="text-slate-500">
-              {stat.title}
-            </p>
-
-            <h2 className="mt-2 text-3xl font-bold text-green-700">
-              {stat.value}
-            </h2>
-          </div>
-        ))}
-
-      </section>
-
-      <section className="mb-10 grid gap-8 lg:grid-cols-3">
-
-        <div className="rounded-xl bg-white p-6 shadow">
-
-          <h2 className="mb-4 text-xl font-semibold">
-            Weather Today
-          </h2>
-
-          <div className="space-y-2 text-slate-600">
-            <p>☀️ Sunny</p>
-            <p>22°C</p>
-            <p>Wind 11 km/h</p>
-          </div>
-
+      <Section title="Overview">
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+          {stats.map((stat) => (
+            <StatCard
+              key={stat.title}
+              title={stat.title}
+              value={stat.value}
+            />
+          ))}
         </div>
+      </Section>
 
-        <div className="rounded-xl bg-white p-6 shadow lg:col-span-2">
+      <Divider />
 
-          <h2 className="mb-4 text-xl font-semibold">
-            Recent Activity
-          </h2>
+      <Section title="Today's Summary">
+        <div className="grid gap-6 lg:grid-cols-3">
+          <Card>
+            <h3 className="mb-4 text-xl font-semibold">
+              Weather Today
+            </h3>
 
-          <ul className="space-y-3">
-            {recentActivity.map((activity) => (
-              <li
-                key={activity}
-                className="rounded-lg bg-slate-100 p-3"
-              >
-                {activity}
-              </li>
-            ))}
-          </ul>
+            <div className="space-y-2 text-slate-600">
+              <p>☀️ Sunny</p>
+              <p>22°C</p>
+              <p>Wind: 11 km/h</p>
+            </div>
+          </Card>
 
+          <Card className="lg:col-span-2">
+            <h3 className="mb-4 text-xl font-semibold">
+              Recent Activity
+            </h3>
+
+            <ul className="space-y-3">
+              {recentActivity.map((activity) => (
+                <li
+                  key={activity}
+                  className="rounded-lg bg-slate-100 p-3"
+                >
+                  {activity}
+                </li>
+              ))}
+            </ul>
+          </Card>
         </div>
+      </Section>
 
-      </section>
+      <Divider />
 
-      <section className="mb-10">
+      <Section title="Observation Map">
+        <MapPreview />
+      </Section>
 
-        <h2 className="mb-4 text-2xl font-bold">
-          Observation Map
-        </h2>
+      <Divider />
 
-        <div className="flex h-96 items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-white text-slate-500">
-          Interactive map coming soon...
-        </div>
+      <Section title="Recent Sightings">
+        <RecentSightings />
+      </Section>
 
-      </section>
+      <Divider />
 
-      <section>
-
-        <h2 className="mb-4 text-2xl font-bold">
-          Species Seen This Month
-        </h2>
-
-        <div className="flex h-64 items-center justify-center rounded-xl bg-white shadow">
-          Charts coming soon...
-        </div>
-
-      </section>
-
-    </main>
+      <Section title="Species Analytics">
+        <Card className="flex h-64 items-center justify-center">
+          <p className="text-slate-500">
+            Charts coming soon...
+          </p>
+        </Card>
+      </Section>
+    </MainLayout>
   );
 }
 
