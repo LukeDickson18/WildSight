@@ -1,9 +1,12 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-DATABASE_URL = "postgresql+psycopg://postgres:postgres@db:5432/wildsight"
+from app.core.settings import settings
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(
+    settings.database_url,
+    echo=False,
+)
 
 SessionLocal = sessionmaker(
     bind=engine,
