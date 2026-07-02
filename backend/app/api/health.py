@@ -9,9 +9,22 @@ router = APIRouter(tags=["Health"])
 
 @router.get("/health")
 def health(db: Session = Depends(get_db)):
-    db.execute(text("SELECT 1"))
+    try:
+        db.execute(text("SELECT 1"))
 
-    return {
-        "status": "healthy",
-        "database": "connected",
-    }
+        postgis_version = db.execute(
+            text("SELECT PostGIS_Version();")
+        ).scalar()
+
+        return {
+            "status": "healthy",
+            "database": "connected",
+            "postgis": postgis_version,
+        }
+
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+            "database": "disconnected",
+            "error": str(e),
+        }

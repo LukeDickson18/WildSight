@@ -127,7 +127,15 @@ docker compose down
 ```bash
 docker compose up --build
 ```
+### If out of sync
+```bash
+docker compose down --rmi local
+```
 
+### Complete refresh
+```bash
+docker compose down -v --rmi local
+```
 ---
 
 ## Folder Structure
