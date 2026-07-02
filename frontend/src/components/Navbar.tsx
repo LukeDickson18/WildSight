@@ -1,21 +1,46 @@
+import { NavLink } from "react-router-dom";
+
+import Button from "./ui/Button";
+import Container from "./ui/Container";
+
 function Navbar() {
+  const navLinkClasses = ({ isActive }: { isActive: boolean }) =>
+    isActive
+      ? "font-semibold text-green-700"
+      : "font-medium text-slate-600 transition hover:text-green-700";
+
   return (
     <nav className="border-b bg-white shadow-sm">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-5">
-        <h1 className="text-2xl font-bold text-green-700">
+      <Container className="flex items-center justify-between py-5">
+        <NavLink
+          to="/"
+          className="text-2xl font-bold text-green-700"
+        >
           🌿 WildSight
-        </h1>
+        </NavLink>
 
-        <div className="space-x-4">
-          <button className="font-medium text-slate-600 hover:text-green-700">
-            Login
-          </button>
+        <div className="flex items-center gap-6">
+          <NavLink to="/" className={navLinkClasses}>
+            Home
+          </NavLink>
 
-          <button className="rounded-lg bg-green-700 px-4 py-2 text-white transition hover:bg-green-800">
-            Sign Up
-          </button>
+          <NavLink to="/dashboard" className={navLinkClasses}>
+            Dashboard
+          </NavLink>
+
+          <NavLink to="/login">
+            <Button variant="secondary">
+              Login
+            </Button>
+          </NavLink>
+
+          <NavLink to="/register">
+            <Button>
+              Sign Up
+            </Button>
+          </NavLink>
         </div>
-      </div>
+      </Container>
     </nav>
   );
 }
