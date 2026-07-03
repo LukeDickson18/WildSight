@@ -1,3 +1,4 @@
+from pathlib import Path
 import os
 
 import requests
@@ -33,3 +34,13 @@ class EBirdClient:
         response.raise_for_status()
 
         return response.text if fmt == "csv" else response.json()
+
+    def download_taxonomy(self, output_path: Path):
+
+        taxonomy = self.get_taxonomy(fmt="csv")
+
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+
+        output_path.write_text(taxonomy, encoding="utf-8")
+
+        print(f"✓ Saved taxonomy to {output_path}")
