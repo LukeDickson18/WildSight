@@ -145,7 +145,7 @@ data/raw/
 data/processed/
 
 # Machine learning outputs
-models/
+/models/
 checkpoints/
 
 # ======================================================

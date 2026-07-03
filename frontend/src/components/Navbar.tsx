@@ -1,9 +1,12 @@
 import { NavLink } from "react-router-dom";
 
+import { useAuth } from "../auth/useAuth";
 import Button from "./ui/Button";
 import Container from "./ui/Container";
 
 function Navbar() {
+  const { isAuthenticated, logout, user } = useAuth();
+
   const navLinkClasses = ({ isActive }: { isActive: boolean }) =>
     isActive
       ? "font-semibold text-green-700"
@@ -28,17 +31,31 @@ function Navbar() {
             Dashboard
           </NavLink>
 
-          <NavLink to="/login">
-            <Button variant="secondary">
-              Login
-            </Button>
-          </NavLink>
+          {isAuthenticated ? (
+            <>
+              <span className="font-medium text-slate-600">
+                {user?.username}
+              </span>
 
-          <NavLink to="/register">
-            <Button>
-              Sign Up
-            </Button>
-          </NavLink>
+              <Button variant="secondary" onClick={logout}>
+                Logout
+              </Button>
+            </>
+          ) : (
+            <>
+              <NavLink to="/login">
+                <Button variant="secondary">
+                  Login
+                </Button>
+              </NavLink>
+
+              <NavLink to="/register">
+                <Button>
+                  Sign Up
+                </Button>
+              </NavLink>
+            </>
+          )}
         </div>
       </Container>
     </nav>
