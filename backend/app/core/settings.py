@@ -7,6 +7,13 @@ class Settings(BaseSettings):
     postgres_db: str
     postgres_host: str
     postgres_port: int
+    jwt_secret_key: str = "change-this-secret-before-production"
+    jwt_algorithm: str = "HS256"
+    access_token_expire_minutes: int = 30
+    cors_origins: list[str] = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ]
 
     model_config = SettingsConfigDict(
         case_sensitive=False,
