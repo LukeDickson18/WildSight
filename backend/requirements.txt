@@ -18,3 +18,5 @@ requests
 python-dotenv
 
 pandas
+
+geoalchemy2

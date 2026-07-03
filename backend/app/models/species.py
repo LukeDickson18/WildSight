@@ -1,8 +1,8 @@
 import uuid
 
-from sqlalchemy import Float, String
+from sqlalchemy import ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
 
@@ -45,28 +45,19 @@ class Species(Base):
         nullable=False,
         default="Bird",
     )
+
+    family_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("families.id"),
+        nullable=False,
+        index=True,
+    )
     
-    taxon_order: Mapped[float] = mapped_column(
-        Float,
-        nullable=False,
+
+    family: Mapped["Family"] = relationship(
+        back_populates="species",
     )
 
-    order_name: Mapped[str] = mapped_column(
-        String(100),
-        nullable=False,
-    )
-
-    family_common_name: Mapped[str] = mapped_column(
-        String(100),
-        nullable=False,
-    )
-
-    family_scientific_name: Mapped[str] = mapped_column(
-        String(100),
-        nullable=False,
-    )
-
-    family_code: Mapped[str] = mapped_column(
-        String(50),
-        nullable=False,
+    observations: Mapped[list["Observation"]] = relationship(
+        back_populates="species",
     )

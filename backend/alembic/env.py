@@ -18,7 +18,7 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # Import your models here to ensure they are included in the metadata
-from app.models import User
+from app.models import *
 
 # Metadata for autogenerate
 target_metadata = Base.metadata
