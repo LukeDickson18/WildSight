@@ -31,13 +31,24 @@ function Navbar() {
             Dashboard
           </NavLink>
 
+          <NavLink to="/species" className={navLinkClasses}>
+            Species
+          </NavLink>
+
+          <NavLink to="/observations" className={navLinkClasses}>
+            Observations
+          </NavLink>
+
           {isAuthenticated ? (
             <>
               <span className="font-medium text-slate-600">
                 {user?.username}
               </span>
 
-              <Button variant="secondary" onClick={logout}>
+              <Button
+                variant="secondary"
+                onClick={logout}
+              >
                 Logout
               </Button>
             </>

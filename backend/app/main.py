@@ -3,8 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.auth import router as auth_router
 from app.api.health import router as health_router
+from app.api.species import router as species_router
 from app.core.settings import settings
-
+from app.api.observations import router as observations_router
 app = FastAPI(
     title="WildSight API",
     version="0.1.0",
@@ -18,10 +19,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Register API routers
 app.include_router(auth_router)
 app.include_router(health_router)
-
+app.include_router(species_router)
+app.include_router(observations_router)
 
 @app.get("/")
 def root():
-    return {"message": "Welcome to the WildSight API!"}
+    return {
+        "message": "Welcome to the WildSight API!"
+    }

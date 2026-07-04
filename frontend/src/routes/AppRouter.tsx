@@ -1,10 +1,15 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import ProtectedRoute from "./ProtectedRoute";
+
 import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import DashboardPage from "../pages/DashboardPage";
+import SpeciesPage from "../pages/SpeciesPage";
 import NotFoundPage from "../pages/NotFoundPage";
+import ObservationsPage from "../pages/ObservationPage";
+import NewObservationPage from "../pages/NewObservationPage";
 
 function AppRouter() {
   return (
@@ -24,6 +29,31 @@ function AppRouter() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/species"
+          element={
+            <ProtectedRoute>
+              <SpeciesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/observations"
+          element={
+            <ProtectedRoute>
+              <ObservationsPage />
+            </ProtectedRoute>
+          }
+        /> 
+        <Route
+          path="/observations/new"
+          element={
+            <ProtectedRoute>
+              <NewObservationPage />
+            </ProtectedRoute>
+          }
+        /> 
 
         {/* Fallback route */}
         <Route path="*" element={<NotFoundPage />} />
