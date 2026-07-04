@@ -1,7 +1,8 @@
 import uuid
+from datetime import datetime
 
 from geoalchemy2 import Geometry
-from sqlalchemy import String
+from sqlalchemy import DateTime, String, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -17,30 +18,30 @@ class Location(Base):
         default=uuid.uuid4,
     )
 
-    name: Mapped[str] = mapped_column(
+    name: Mapped[str | None] = mapped_column(
         String(255),
-        nullable=False,
+        nullable=True,
         index=True,
     )
 
-    country: Mapped[str] = mapped_column(
+    country: Mapped[str | None] = mapped_column(
         String(100),
-        nullable=False,
+        nullable=True,
     )
 
-    state_province: Mapped[str] = mapped_column(
+    state_province: Mapped[str | None] = mapped_column(
         String(100),
-        nullable=False,
+        nullable=True,
     )
 
-    municipality: Mapped[str] = mapped_column(
+    municipality: Mapped[str | None] = mapped_column(
         String(100),
-        nullable=False,
+        nullable=True,
     )
 
-    locality: Mapped[str] = mapped_column(
+    locality: Mapped[str | None] = mapped_column(
         String(255),
-        nullable=False,
+        nullable=True,
     )
 
     coordinates: Mapped[object] = mapped_column(
@@ -49,6 +50,19 @@ class Location(Base):
             srid=4326,
             spatial_index=True,
         ),
+        nullable=False,
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False,
+    )
+
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
         nullable=False,
     )
 

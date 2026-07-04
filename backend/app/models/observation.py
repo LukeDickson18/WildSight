@@ -34,7 +34,7 @@ class Observation(Base):
     location_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("locations.id", ondelete="RESTRICT"),
-        nullable=False,
+        nullable=True, #Changed from False to True to allow for observations without a location for testing
         index=True,
     )
 
