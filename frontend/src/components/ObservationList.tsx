@@ -3,10 +3,12 @@ import ObservationCard from "./ObservationCard";
 
 interface Props {
   observations: Observation[];
+  onDelete: (id: string) => void;
 }
 
 export default function ObservationList({
   observations,
+  onDelete,
 }: Props) {
   return (
     <div className="space-y-4">
@@ -14,6 +16,7 @@ export default function ObservationList({
         <ObservationCard
           key={observation.id}
           observation={observation}
+          onDelete={onDelete}
         />
       ))}
     </div>

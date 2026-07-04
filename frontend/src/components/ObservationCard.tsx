@@ -1,11 +1,17 @@
 import type { Observation } from "../types/observation";
+
 import Card from "./ui/Card";
+import Button from "./ui/Button";
 
 interface Props {
   observation: Observation;
+  onDelete: (id: string) => void;
 }
 
-export default function ObservationCard({ observation }: Props) {
+export default function ObservationCard({
+  observation,
+  onDelete,
+}: Props) {
   return (
     <Card className="p-6 hover:shadow-lg transition-shadow">
       <div className="flex justify-between items-start">
@@ -42,10 +48,19 @@ export default function ObservationCard({ observation }: Props) {
           )}
         </div>
 
-        <div className="text-right text-sm text-slate-500">
-          {new Date(
-            observation.observation_datetime,
-          ).toLocaleDateString()}
+        <div className="flex flex-col items-end gap-3">
+          <div className="text-right text-sm text-slate-500">
+            {new Date(
+              observation.observation_datetime,
+            ).toLocaleDateString()}
+          </div>
+
+          <Button
+            variant="danger"
+            onClick={() => onDelete(observation.id)}
+          >
+            Delete
+          </Button>
         </div>
       </div>
     </Card>
