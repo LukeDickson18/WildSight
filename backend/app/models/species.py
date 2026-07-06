@@ -1,3 +1,4 @@
+from __future__ import annotations
 import uuid
 
 from sqlalchemy import ForeignKey, String
@@ -60,4 +61,9 @@ class Species(Base):
 
     observations: Mapped[list["Observation"]] = relationship(
         back_populates="species",
+    )
+
+    countries: Mapped[list["SpeciesCountry"]] = relationship(
+        back_populates="species",
+        cascade="all, delete-orphan",
     )
