@@ -23,9 +23,6 @@ function Navbar() {
         </NavLink>
 
         <div className="flex items-center gap-6">
-          <NavLink to="/" className={navLinkClasses}>
-            Home
-          </NavLink>
 
           <NavLink to="/dashboard" className={navLinkClasses}>
             Dashboard

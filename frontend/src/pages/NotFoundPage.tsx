@@ -20,9 +20,9 @@ function NotFoundPage() {
           Sorry, the page you're looking for doesn't exist or has been moved.
         </p>
 
-        <Link to="/">
+        <Link to="/Dashboard">
           <Button className="mt-8 w-full">
-            Return Home
+            Return to Dashboard
           </Button>
         </Link>
       </Card>

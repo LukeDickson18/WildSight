@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import MainLayout from "../layouts/MainLayout";
 
 import {
   getSpecies,
@@ -67,7 +68,7 @@ export default function SpeciesPage() {
   }
 
   return (
-    <Container>
+    <MainLayout>
       <PageHeader
         title="Species Explorer"
         description="Browse and search all species available in WildSight."
@@ -134,6 +135,6 @@ export default function SpeciesPage() {
           </div>
         </Section>
       )}
-    </Container>
+    </MainLayout>
   );
 }
