@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+import math
+from datetime import date
 from uuid import UUID
 
 from fastapi import HTTPException, status
@@ -16,7 +20,6 @@ from app.services.locations.location_service import LocationService
 
 
 class ObservationService:
-
     def __init__(
         self,
         repository: ObservationRepository,
@@ -27,13 +30,26 @@ class ObservationService:
 
     def get_observations(
         self,
+        *,
+        user_id: UUID,
         page: int,
         page_size: int,
+        search: str | None = None,
+        species_id: UUID | None = None,
+        start_date: date | None = None,
+        end_date: date | None = None,
+        sort: str = "newest",
     ) -> ObservationListResponse:
 
         observations, total = self.repository.get_observations(
+            user_id=user_id,
             page=page,
             page_size=page_size,
+            search=search,
+            species_id=species_id,
+            start_date=start_date,
+            end_date=end_date,
+            sort=sort,
         )
 
         return ObservationListResponse(
@@ -41,6 +57,7 @@ class ObservationService:
             total=total,
             page=page,
             page_size=page_size,
+            total_pages=max(1, math.ceil(total / page_size)),
         )
 
     def get_observation_by_id(
@@ -60,6 +77,7 @@ class ObservationService:
 
     def create_observation(
         self,
+        *,
         data: ObservationCreate,
         user_id: UUID,
     ) -> ObservationResponse:
@@ -84,6 +102,7 @@ class ObservationService:
 
     def update_observation(
         self,
+        *,
         observation_id: UUID,
         data: ObservationUpdate,
     ) -> ObservationResponse:

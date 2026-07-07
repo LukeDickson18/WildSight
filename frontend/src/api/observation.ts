@@ -1,18 +1,48 @@
 import { request } from "./client";
+
 import type {
   Observation,
   ObservationCreate,
   ObservationListResponse,
+  ObservationQueryParams,
   ObservationUpdate,
 } from "../types/observation";
 
-export function getObservations(
+export async function getObservations({
   page = 1,
-  pageSize = 50,
-  token?: string,
-): Promise<ObservationListResponse> {
+  pageSize = 25,
+  search,
+  speciesId,
+  startDate,
+  endDate,
+  sort = "newest",
+  token,
+}: ObservationQueryParams): Promise<ObservationListResponse> {
+  const params = new URLSearchParams();
+
+  params.set("page", page.toString());
+  params.set("page_size", pageSize.toString());
+
+  if (search) {
+    params.set("search", search);
+  }
+
+  if (speciesId) {
+    params.set("species_id", speciesId);
+  }
+
+  if (startDate) {
+    params.set("start_date", startDate);
+  }
+
+  if (endDate) {
+    params.set("end_date", endDate);
+  }
+
+  params.set("sort", sort);
+
   return request(
-    `/observations?page=${page}&page_size=${pageSize}`,
+    `/observations?${params.toString()}`,
     {
       token,
     },
