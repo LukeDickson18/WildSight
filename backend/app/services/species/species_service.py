@@ -2,8 +2,8 @@ from uuid import UUID
 
 from fastapi import HTTPException, status
 
-from app.repositories.species_repository import SpeciesRepository
-from app.schemas.species import SpeciesListResponse, SpeciesResponse
+from backend.app.repositories.species.species_repository import SpeciesRepository
+from backend.app.schemas.species.species import SpeciesListResponse, SpeciesResponse
 
 
 class SpeciesService:

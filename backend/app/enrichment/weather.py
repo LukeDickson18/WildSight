@@ -3,7 +3,7 @@ from datetime import datetime
 import httpx
 
 from app.core.settings import settings
-from app.schemas.weather import WeatherData
+from backend.app.schemas.weather.weather import WeatherData
 
 WEATHER_CODES = {
     0: "Clear sky",

@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.auth import router as auth_router
-from app.api.health import router as health_router
-from app.api.species import router as species_router
+from app.routers.auth import router as auth_router
+from app.routers.health import router as health_router
+from app.routers.species import router as species_router
 from app.core.settings import settings
-from app.api.observations import router as observations_router
+from app.routers.observations import router as observations_router
 app = FastAPI(
     title="WildSight API",
     version="0.1.0",

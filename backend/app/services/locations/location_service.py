@@ -1,8 +1,8 @@
 from geoalchemy2.elements import WKTElement
 
 from app.models.location import Location
-from app.repositories.location_repository import LocationRepository
-from app.schemas.location import LocationCreate
+from backend.app.repositories.locations.location_repository import LocationRepository
+from backend.app.schemas.locations.location import LocationCreate
 
 
 class LocationService:

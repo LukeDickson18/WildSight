@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from app.auth.jwt import verify_access_token
 from app.db.session import get_db
 from app.models.user import User
-from app.services.auth_service import get_user_by_id
+from backend.app.services.auth.auth_service import get_user_by_id
 
 
 bearer_scheme = HTTPBearer(auto_error=False)

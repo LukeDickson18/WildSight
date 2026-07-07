@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.weather import Weather
-from app.schemas.weather import WeatherData
+from backend.app.schemas.weather.weather import WeatherData
 
 
 class WeatherRepository:
