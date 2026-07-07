@@ -1,4 +1,11 @@
+import { useEffect, useState } from "react";
+
 import MainLayout from "../layouts/MainLayout";
+
+import { useAuth } from "../auth/useAuth";
+import { getDashboard } from "../api/dashboard";
+
+import type { DashboardResponse } from "../types/dashboard";
 
 import Card from "../components/ui/Card";
 import Divider from "../components/ui/Divider";
@@ -10,29 +17,77 @@ import MapPreview from "../components/MapPreview";
 import RecentSightings from "../components/RecentSightings";
 
 function DashboardPage() {
+  const { token } = useAuth();
+
+  const [dashboard, setDashboard] =
+    useState<DashboardResponse | null>(null);
+
+  const [loading, setLoading] = useState(true);
+
+  const [error, setError] =
+    useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadDashboard() {
+      try {
+        const response = await getDashboard(token);
+
+        setDashboard(response);
+      } catch (err) {
+        console.error(err);
+        setError("Unable to load dashboard.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadDashboard();
+  }, [token]);
+
+  if (loading) {
+    return (
+      <MainLayout>
+        <PageHeader
+          title="Dashboard"
+          subtitle="Loading dashboard..."
+        />
+      </MainLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <MainLayout>
+        <PageHeader title="Dashboard" />
+
+        <Card className="p-8 text-center text-red-600">
+          {error}
+        </Card>
+      </MainLayout>
+    );
+  }
+
   const stats = [
     {
-      title: "Sightings",
-      value: "143",
+      title: "Observations",
+      value: dashboard?.total_observations ?? 0,
     },
     {
-      title: "Species",
-      value: "61",
+      title: "Species Seen",
+      value: dashboard?.species_seen ?? 0,
     },
     {
-      title: "Hotspots",
-      value: "8",
+      title: "Hotspots Visited",
+      value: dashboard?.hotspots_visited ?? 0,
     },
     {
-      title: "Current Streak",
-      value: "12 Days",
+      title: "Countries Visited",
+      value: dashboard?.countries_visited ?? 0,
     },
   ];
 
   const recentActivity = [
-    "Cape Sugarbird • Table Mountain",
-    "African Penguin • Boulders Beach",
-    "Malachite Kingfisher • Rondevlei Nature Reserve",
+    "Recent observations coming soon...",
   ];
 
   return (
@@ -64,9 +119,8 @@ function DashboardPage() {
             </h3>
 
             <div className="space-y-2 text-slate-600">
-              <p>☀️ Sunny</p>
-              <p>22°C</p>
-              <p>Wind: 11 km/h</p>
+              <p>☀️ Coming Soon</p>
+              <p>Environmental enrichment will appear here.</p>
             </div>
           </Card>
 
@@ -106,7 +160,7 @@ function DashboardPage() {
       <Section title="Species Analytics">
         <Card className="flex h-64 items-center justify-center">
           <p className="text-slate-500">
-            Charts coming soon...
+            Analytics coming soon...
           </p>
         </Card>
       </Section>

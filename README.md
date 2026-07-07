@@ -198,3 +198,12 @@ WildSight/
 - [ ] User profiles
 - [ ] Leaderboards
 - [ ] Collaboration features
+
+### Seeding 
+docker compose exec backend python -m scripts.seeding.development 
+### Enrich
+docker compose exec backend python -m scripts.enrichment.location
+docker compose exec backend python -m scripts.enrichment.elevation
+docker compose exec backend python -m scripts.enrichment.weather
+docker compose exec backend python -m scripts.enrichment.astronomy
+docker compose exec backend python -m scripts.enrichment.hotspot
