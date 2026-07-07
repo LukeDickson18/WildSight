@@ -1,4 +1,4 @@
-from backend.scripts.imports.taxonomy_importer import import_taxonomy
+from scripts.imports.taxonomy_importer import import_taxonomy
 
 
 if __name__ == "__main__":

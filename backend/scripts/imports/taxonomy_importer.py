@@ -11,7 +11,6 @@ from app.models.species import Species
 
 DATA_FILE = (
     Path(__file__).resolve().parents[2]
-    / "app"
     / "data"
     / "processed"
     / "ebird"

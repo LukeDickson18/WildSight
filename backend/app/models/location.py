@@ -46,27 +46,6 @@ class Location(Base):
         nullable=True,
     )
 
-    # Derived environmental information
-    elevation: Mapped[float | None] = mapped_column(
-        Float,
-        nullable=True,
-    )
-
-    biome: Mapped[str | None] = mapped_column(
-        String(100),
-        nullable=True,
-    )
-
-    habitat: Mapped[str | None] = mapped_column(
-        String(100),
-        nullable=True,
-    )
-
-    protected_area: Mapped[str | None] = mapped_column(
-        String(255),
-        nullable=True,
-    )
-
     # PostGIS geometry (POINT in WGS84)
     coordinates: Mapped[object] = mapped_column(
         Geometry(
