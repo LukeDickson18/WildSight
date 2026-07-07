@@ -1,4 +1,4 @@
-from .hotspot import (
+from .hotspots import (
     HotspotListResponse,
     HotspotResponse,
 )

@@ -6,6 +6,8 @@ from app.routers.health import router as health_router
 from app.routers.species import router as species_router
 from app.core.settings import settings
 from app.routers.observations import router as observations_router
+from app.routers.dashboard import router as dashboard_router
+
 app = FastAPI(
     title="WildSight API",
     version="0.1.0",
@@ -24,6 +26,7 @@ app.include_router(auth_router)
 app.include_router(health_router)
 app.include_router(species_router)
 app.include_router(observations_router)
+app.include_router(dashboard_router)
 
 @app.get("/")
 def root():

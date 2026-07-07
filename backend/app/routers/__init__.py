@@ -5,6 +5,7 @@ from .hotspots import router as hotspot_router
 from .observations import router as observation_router
 from .species import router as species_router
 from .locations import router as location_router
+from .users import router as user_router
 
 __all__ = [
     "auth_router",
@@ -14,4 +15,5 @@ __all__ = [
     "observation_router",
     "species_router",
     "location_router",
+    "user_router",
 ]

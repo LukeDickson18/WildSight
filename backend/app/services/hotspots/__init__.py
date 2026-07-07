@@ -1,4 +1,4 @@
-from .hotspot_service import HotspotService
+from .hotspots_service import HotspotService
 
 __all__ = [
     "HotspotService",

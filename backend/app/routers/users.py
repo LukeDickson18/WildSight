@@ -8,8 +8,8 @@ from app.auth.dependencies import get_current_user
 from app.db.session import get_db
 from app.models.observation import Observation
 from app.models.user import User
-from app.schemas.observation import ObservationRead
-from app.schemas.user import UserRead, UserUpdate
+from app.schemas.observations import ObservationResponse
+from app.schemas.users import UserRead, UserUpdate
 
 router = APIRouter(
     prefix="/users",
@@ -68,7 +68,7 @@ def get_user(
 
 @router.get(
     "/{user_id}/observations",
-    response_model=list[ObservationRead],
+    response_model=list[ObservationResponse],
 )
 def get_user_observations(
     user_id: UUID,

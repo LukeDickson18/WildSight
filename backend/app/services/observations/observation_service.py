@@ -12,7 +12,7 @@ from app.schemas.observations.observations import (
     ObservationResponse,
     ObservationUpdate,
 )
-from backend.app.services.locations.location_service import LocationService
+from app.services.locations.location_service import LocationService
 
 
 class ObservationService:
