@@ -22,6 +22,7 @@ class ObservationRepository:
             .options(
                 joinedload(Observation.species),
                 joinedload(Observation.location),
+                joinedload(Observation.weather),   # NEW
                 joinedload(Observation.user),
             )
             .where(Observation.id == observation_id)
@@ -43,6 +44,7 @@ class ObservationRepository:
             .options(
                 joinedload(Observation.species),
                 joinedload(Observation.location),
+                joinedload(Observation.weather),   # NEW
                 joinedload(Observation.user),
             )
             .order_by(Observation.observation_datetime.desc())

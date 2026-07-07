@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 
 from geoalchemy2 import Geometry
-from sqlalchemy import DateTime, String, func
+from sqlalchemy import DateTime, Float, String, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -18,12 +18,14 @@ class Location(Base):
         default=uuid.uuid4,
     )
 
+    # Optional user-friendly name
     name: Mapped[str | None] = mapped_column(
         String(255),
         nullable=True,
         index=True,
     )
 
+    # Reverse geocoded information
     country: Mapped[str | None] = mapped_column(
         String(100),
         nullable=True,
@@ -44,6 +46,28 @@ class Location(Base):
         nullable=True,
     )
 
+    # Derived environmental information
+    elevation: Mapped[float | None] = mapped_column(
+        Float,
+        nullable=True,
+    )
+
+    biome: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    habitat: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    protected_area: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True,
+    )
+
+    # PostGIS geometry (POINT in WGS84)
     coordinates: Mapped[object] = mapped_column(
         Geometry(
             geometry_type="POINT",

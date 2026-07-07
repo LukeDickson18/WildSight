@@ -38,6 +38,12 @@ class Observation(Base):
         index=True,
     )
 
+    weather_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("weather.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+
     observation_datetime: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
@@ -77,5 +83,9 @@ class Observation(Base):
     )
 
     location: Mapped["Location"] = relationship(
+        back_populates="observations",
+    )
+
+    weather: Mapped["Weather"] = relationship(
         back_populates="observations",
     )
