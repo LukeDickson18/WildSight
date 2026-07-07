@@ -1,5 +1,5 @@
-import type { Observation } from "../types/observation";
-import ObservationCard from "./ObservationCard";
+import type { Observation } from "../../types/observation";
+import ObservationCard from "../observations/ObservationCard";
 
 interface Props {
   observations: Observation[];

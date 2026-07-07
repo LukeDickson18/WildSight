@@ -1,77 +1,58 @@
-import { useCallback, useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 import MainLayout from "../layouts/MainLayout";
 
-import Button from "../components/ui/Button";
-import Card from "../components/ui/Card";
 import PageHeader from "../components/ui/PageHeader";
+import Card from "../components/ui/Card";
 
-import ObservationList from "../components/ObservationList";
-import ObservationEmptyState from "../components/ObservationEmptyState";
-import ObservationStats from "../components/ObservationStats";
+import ObservationToolbar from "../components/observations/ObservationToolbar";
+import ObservationSummary from "../components/observations/ObservationSummary";
+import ObservationGroup from "../components/observations/ObservationGroup";
+import ObservationPagination from "../components/observations/ObservationPagination";
+import ObservationEmptyState from "../components/observations/ObservationEmptyState";
 
-import {
-  deleteObservation,
-  getObservations,
-} from "../api/observation";
+import { useObservations } from "../hooks/useObservations";
 
+import { deleteObservation } from "../api/observation";
 import { useAuth } from "../auth/useAuth";
 
-import type {
-  Observation,
-  ObservationListResponse,
-} from "../types/observation";
+import { groupObservations } from "../utils/observationGrouping";
 
 export default function ObservationsPage() {
   const navigate = useNavigate();
+
   const { token } = useAuth();
 
-  const [observations, setObservations] = useState<Observation[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    observations,
+    loading,
+    error,
 
-  const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
+    total,
+    totalPages,
 
-  const pageSize = 50;
+    page,
+    pageSize,
 
-  const loadObservations = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+    search,
+    setSearch,
 
-    try {
-      const response: ObservationListResponse =
-        await getObservations(page, pageSize, token);
+    setPage,
 
-      setObservations(response.items);
-      setTotal(response.total);
-    } catch (err) {
-      console.error(err);
-      setError("Failed to load observations.");
-    } finally {
-      setLoading(false);
-    }
-  }, [page, token]);
+    refresh,
+  } = useObservations();
 
-  useEffect(() => {
-    loadObservations();
-  }, [loadObservations]);
-
-  async function handleRefresh() {
-    setRefreshing(true);
-
-    await loadObservations();
-
-    setRefreshing(false);
-  }
+  const groups = useMemo(
+    () => groupObservations(observations),
+    [observations],
+  );
 
   async function handleDelete(id: string) {
     if (!token) return;
 
     const confirmed = window.confirm(
-      "Delete this observation?"
+      "Delete this observation?",
     );
 
     if (!confirmed) return;
@@ -79,10 +60,13 @@ export default function ObservationsPage() {
     try {
       await deleteObservation(id, token);
 
-      await loadObservations();
+      await refresh();
     } catch (err) {
       console.error(err);
-      alert("Unable to delete observation.");
+
+      alert(
+        "Unable to delete observation.",
+      );
     }
   }
 
@@ -91,44 +75,29 @@ export default function ObservationsPage() {
       <div className="space-y-8">
 
         <PageHeader
-          title="Observations"
-          description="Record, review and manage your wildlife observations."
+          title="My Observations"
+          description="Browse, search and manage your wildlife observations."
         />
 
-        <div className="flex flex-wrap gap-4 justify-between">
+        <ObservationToolbar
+          search={search}
+          onSearchChange={setSearch}
+        />
 
-          <Button
-            onClick={() =>
-              navigate("/observations/new")
-            }
-          >
-            Log Observation
-          </Button>
-
-          <Button
-            variant="secondary"
-            onClick={handleRefresh}
-            disabled={refreshing}
-          >
-            {refreshing
-              ? "Refreshing..."
-              : "Refresh"}
-          </Button>
-
-        </div>
-
-        <ObservationStats
+        <ObservationSummary
           total={total}
+          page={page}
+          pageSize={pageSize}
         />
 
         {loading && (
-          <Card className="p-8 text-center">
+          <Card className="p-10 text-center">
             Loading observations...
           </Card>
         )}
 
-        {error && (
-          <Card className="p-8 text-center text-red-600">
+        {!loading && error && (
+          <Card className="p-10 text-center text-red-600">
             {error}
           </Card>
         )}
@@ -147,36 +116,24 @@ export default function ObservationsPage() {
           !error &&
           observations.length > 0 && (
             <>
-              <ObservationList
-                observations={observations}
-                onDelete={handleDelete}
-              />
-
-              <div className="flex justify-between items-center pt-4">
-
-                <Button
-                  disabled={page === 1}
-                  onClick={() =>
-                    setPage((p) => p - 1)
-                  }
-                >
-                  Previous
-                </Button>
-
-                <span className="text-sm text-slate-600">
-                  Page {page}
-                </span>
-
-                <Button
-                  disabled={observations.length < pageSize}
-                  onClick={() =>
-                    setPage((p) => p + 1)
-                  }
-                >
-                  Next
-                </Button>
-
+              <div className="space-y-10">
+                {groups.map((group) => (
+                  <ObservationGroup
+                    key={group.title}
+                    title={group.title}
+                    observations={
+                      group.observations
+                    }
+                    onDelete={handleDelete}
+                  />
+                ))}
               </div>
+
+              <ObservationPagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
+              />
             </>
           )}
 
