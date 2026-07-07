@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
 
 from app.models.observation import Observation
-from backend.app.repositories.locations.location_repository import LocationRepository
-from backend.app.repositories.weather.weather_repository import WeatherRepository
-from backend.app.enrichment.weather import WeatherService
+from app.repositories.locations import LocationRepository
+from app.repositories.weather import  WeatherRepository
+from app.enrichment.weather import WeatherService
 
 
 class ObservationEnrichmentService:

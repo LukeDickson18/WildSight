@@ -3,10 +3,10 @@ from uuid import UUID
 from fastapi import HTTPException, status
 
 from app.models.observation import Observation
-from backend.app.repositories.locations.location_repository import LocationRepository
-from backend.app.repositories.observations.observation_repository import ObservationRepository
-from backend.app.schemas.locations.location import LocationCreate
-from backend.app.schemas.observations.observations import (
+from app.repositories.locations import LocationRepository
+from app.repositories.observations import ObservationRepository
+from app.schemas.locations.location import LocationCreate
+from app.schemas.observations.observations import (
     ObservationCreate,
     ObservationListResponse,
     ObservationResponse,

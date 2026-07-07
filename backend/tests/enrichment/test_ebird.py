@@ -1,4 +1,4 @@
-from backend.app.enrichment.ebird import EBirdClient
+from app.enrichment.ebird import EBirdClient
 
 
 def test_get_taxonomy():

@@ -2,6 +2,7 @@ import uuid
 from datetime import datetime
 
 from geoalchemy2 import Geometry
+from geoalchemy2.shape import to_shape
 from sqlalchemy import DateTime, Float, String, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -86,7 +87,7 @@ class Location(Base):
         String(255),
         nullable=True,
     )
-    
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
@@ -103,3 +104,13 @@ class Location(Base):
     observations: Mapped[list["Observation"]] = relationship(
         back_populates="location",
     )
+
+    @property
+    def latitude(self) -> float:
+        """Latitude extracted from the PostGIS POINT geometry."""
+        return float(to_shape(self.coordinates).y)
+
+    @property
+    def longitude(self) -> float:
+        """Longitude extracted from the PostGIS POINT geometry."""
+        return float(to_shape(self.coordinates).x)

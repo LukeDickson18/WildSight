@@ -1,5 +1,5 @@
 from app.db.database import SessionLocal
-from backend.app.enrichment.observation import (
+from app.enrichment.observation import (
     ObservationEnrichmentService,
 )
 

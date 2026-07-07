@@ -6,15 +6,15 @@ from sqlalchemy.orm import Session
 from app.auth.dependencies import get_current_user
 from app.db.session import get_db
 from app.models.user import User
-from backend.app.repositories.observations.observation_repository import ObservationRepository
+from app.repositories.observations import ObservationRepository
 
-from backend.app.schemas.observations.observations import (
+from app.schemas.observations.observations import (
     ObservationCreate,
     ObservationListResponse,
     ObservationResponse,
     ObservationUpdate,
 )
-from backend.app.services.observations.observation_service import ObservationService
+from app.services.observations.observation_service import ObservationService
 
 router = APIRouter(
     prefix="/observations",
@@ -22,7 +22,7 @@ router = APIRouter(
 )
 
 
-from backend.app.repositories.locations.location_repository import LocationRepository
+from app.repositories.locations import LocationRepository
 
 def get_observation_service(
     db: Session = Depends(get_db),

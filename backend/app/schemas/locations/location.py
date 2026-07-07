@@ -21,6 +21,7 @@ class LocationRead(BaseModel):
     id: UUID
 
     name: str | None
+
     country: str | None
     state_province: str | None
     municipality: str | None
@@ -31,3 +32,14 @@ class LocationRead(BaseModel):
 
     created_at: datetime
     updated_at: datetime
+
+
+class LocationResponse(LocationRead):
+    pass
+
+
+class LocationListResponse(BaseModel):
+    items: list[LocationResponse]
+    total: int
+    page: int
+    page_size: int

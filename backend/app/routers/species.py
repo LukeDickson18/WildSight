@@ -4,9 +4,9 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from backend.app.repositories.species.species_repository import SpeciesRepository
-from backend.app.schemas.species.species import SpeciesListResponse, SpeciesResponse
-from backend.app.services.species.species_service import SpeciesService
+from app.repositories.species.species_repository import SpeciesRepository
+from app.schemas.species.species import SpeciesListResponse, SpeciesResponse
+from app.services.species import SpeciesService
 
 router = APIRouter(
     prefix="/species",

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from backend.app.enrichment.ebird import EBirdClient
+from app.enrichment.ebird import EBirdClient
 
 
 def download_taxonomy():

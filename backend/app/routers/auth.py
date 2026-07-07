@@ -6,13 +6,13 @@ from sqlalchemy.orm import Session
 from app.auth.dependencies import get_current_user
 from app.db.session import get_db
 from app.models.user import User
-from backend.app.schemas.auth.auth import (
+from app.schemas.auth.auth import (
     LoginRequest,
     RegisterRequest,
     TokenResponse,
     UserResponse,
 )
-from backend.app.services.auth.auth_service import login_user, register_user
+from app.services.auth.auth_service import login_user, register_user
 
 
 router = APIRouter(tags=["Authentication"])

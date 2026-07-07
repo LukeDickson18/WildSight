@@ -7,7 +7,7 @@ from sqlalchemy.orm import selectinload
 from app.db.session import SessionLocal
 from app.enrichment.weather import WeatherService
 from app.models.observation import Observation
-from backend.app.repositories.weather.weather_repository import WeatherRepository
+from app.repositories.weather import  WeatherRepository
 
 BATCH_SIZE = 100
 
