@@ -5,9 +5,9 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from app.db.session import SessionLocal
+from app.enrichment.weather import WeatherService
 from app.models.observation import Observation
 from app.repositories.weather_repository import WeatherRepository
-from app.enrichment.weather import WeatherService
 
 BATCH_SIZE = 100
 
@@ -30,6 +30,9 @@ def enrich_observations() -> None:
 
         enriched = 0
 
+        # Cache weather records by (latitude, longitude, hour)
+        weather_cache = {}
+
         for index, observation in enumerate(observations, start=1):
 
             if observation.location is None:
@@ -37,22 +40,40 @@ def enrich_observations() -> None:
 
             point = to_shape(observation.location.coordinates)
 
-            longitude = point.x
             latitude = point.y
+            longitude = point.x
+
+            observation_hour = observation.observation_datetime.replace(
+                minute=0,
+                second=0,
+                microsecond=0,
+            )
+
+            cache_key = (
+                round(latitude, 5),
+                round(longitude, 5),
+                observation_hour,
+            )
 
             try:
-                weather_data = weather_service.get_weather(
-                    latitude=latitude,
-                    longitude=longitude,
-                    observation_datetime=observation.observation_datetime,
-                )
 
-                weather = weather_repository.get_or_create(
-                    weather_data
-                )
+                if cache_key in weather_cache:
+                    weather = weather_cache[cache_key]
+
+                else:
+                    weather_data = weather_service.get_weather(
+                        latitude=latitude,
+                        longitude=longitude,
+                        observation_datetime=observation.observation_datetime,
+                    )
+
+                    weather = weather_repository.get_or_create(
+                        weather_data
+                    )
+
+                    weather_cache[cache_key] = weather
 
                 observation.weather = weather
-
                 enriched += 1
 
             except Exception as exc:

@@ -18,7 +18,12 @@ class Hotspot(Base):
         primary_key=True,
         default=uuid.uuid4,
     )
-
+    ebird_id: Mapped[str] = mapped_column(
+        String(20),
+        unique=True,
+        index=True,
+        nullable=False,
+    )
     name: Mapped[str] = mapped_column(
         String(255),
         nullable=False,
@@ -27,7 +32,8 @@ class Hotspot(Base):
 
     source: Mapped[str | None] = mapped_column(
         String(50),
-        nullable=True,
+        nullable=False,
+        default="ebird",
     )
 
     latitude: Mapped[float] = mapped_column(

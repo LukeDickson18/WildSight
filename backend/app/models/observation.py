@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Integer, Text, func
+from sqlalchemy import DateTime, ForeignKey, Integer, Float, Text, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -54,7 +54,10 @@ class Observation(Base):
         ForeignKey("hotspots.id", ondelete="SET NULL"),
         nullable=True,
     )
-
+    distance_to_hotspot_m: Mapped[float | None] = mapped_column(
+        Float,
+        nullable=True,
+    )
     observation_datetime: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,

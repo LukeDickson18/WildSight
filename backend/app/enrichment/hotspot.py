@@ -1,13 +1,15 @@
-from geoalchemy2 import Geography
-from geoalchemy2.functions import ST_DWithin, ST_Distance
+from geoalchemy2.functions import ST_DistanceSphere
 from sqlalchemy import select
 
 from app.models.hotspot import Hotspot
 
 
-def get_nearest_hotspot(db, point, max_distance: float = 1000):
+def get_nearest_hotspot(
+    db,
+    point,
+):
     """
-    Return the nearest hotspot within max_distance (metres).
+    Return the nearest hotspot and its distance (metres).
 
     Parameters
     ----------
@@ -17,28 +19,28 @@ def get_nearest_hotspot(db, point, max_distance: float = 1000):
     point
         PostGIS POINT geometry.
 
-    max_distance
-        Maximum search distance in metres.
-
     Returns
     -------
-    Hotspot | None
+    tuple[Hotspot | None, float | None]
     """
 
-    return db.scalar(
-        select(Hotspot)
-        .where(
-            ST_DWithin(
-                Geography(Hotspot.coordinates),
-                Geography(point),
-                max_distance,
-            )
+    distance = ST_DistanceSphere(
+        Hotspot.coordinates,
+        point,
+    ).label("distance")
+
+    result = db.execute(
+        select(
+            Hotspot,
+            distance,
         )
-        .order_by(
-            ST_Distance(
-                Geography(Hotspot.coordinates),
-                Geography(point),
-            )
-        )
+        .order_by(distance)
         .limit(1)
-    )
+    ).first()
+
+    if result is None:
+        return None, None
+
+    hotspot, distance = result
+
+    return hotspot, float(distance)

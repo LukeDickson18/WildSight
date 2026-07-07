@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     "https://archive-api.open-meteo.com/v1/archive"
     )
     open_meteo_timeout: int = 20
+
+    hotspot_link_distance_m: int = 1000
     # ebird_api_key: str
     # ebird_base_url: str = ...
     # inaturalist_base_url: str = ...
