@@ -1,3 +1,4 @@
+from datetime import date
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query, Response, status
@@ -6,8 +7,8 @@ from sqlalchemy.orm import Session
 from app.auth.dependencies import get_current_user
 from app.db.session import get_db
 from app.models.user import User
+from app.repositories.locations import LocationRepository
 from app.repositories.observations import ObservationRepository
-
 from app.schemas.observations.observations import (
     ObservationCreate,
     ObservationListResponse,
@@ -22,8 +23,6 @@ router = APIRouter(
 )
 
 
-from app.repositories.locations import LocationRepository
-
 def get_observation_service(
     db: Session = Depends(get_db),
 ) -> ObservationService:
@@ -36,19 +35,54 @@ def get_observation_service(
         location_repository,
     )
 
+
 @router.get(
     "",
     response_model=ObservationListResponse,
-    summary="Get observations",
+    summary="Get current user's observations",
 )
 def get_observations(
     page: int = Query(1, ge=1),
-    page_size: int = Query(50, ge=1, le=100),
-    service: ObservationService = Depends(get_observation_service),
+    page_size: int = Query(25, ge=1, le=100),
+
+    search: str | None = Query(
+        default=None,
+        description="Search species, notes or location",
+    ),
+
+    species_id: UUID | None = Query(
+        default=None,
+    ),
+
+    start_date: date | None = Query(
+        default=None,
+    ),
+
+    end_date: date | None = Query(
+        default=None,
+    ),
+
+    sort: str = Query(
+        default="newest",
+        pattern="^(newest|oldest|species|updated)$",
+    ),
+
+    current_user: User = Depends(get_current_user),
+
+    service: ObservationService = Depends(
+        get_observation_service,
+    ),
 ) -> ObservationListResponse:
+
     return service.get_observations(
+        user_id=current_user.id,
         page=page,
         page_size=page_size,
+        search=search,
+        species_id=species_id,
+        start_date=start_date,
+        end_date=end_date,
+        sort=sort,
     )
 
 
@@ -59,9 +93,14 @@ def get_observations(
 )
 def get_observation(
     observation_id: UUID,
-    service: ObservationService = Depends(get_observation_service),
+    service: ObservationService = Depends(
+        get_observation_service,
+    ),
 ) -> ObservationResponse:
-    return service.get_observation_by_id(observation_id)
+
+    return service.get_observation_by_id(
+        observation_id,
+    )
 
 
 @router.post(
@@ -73,8 +112,11 @@ def get_observation(
 def create_observation(
     observation: ObservationCreate,
     current_user: User = Depends(get_current_user),
-    service: ObservationService = Depends(get_observation_service),
+    service: ObservationService = Depends(
+        get_observation_service,
+    ),
 ) -> ObservationResponse:
+
     return service.create_observation(
         data=observation,
         user_id=current_user.id,
@@ -89,8 +131,11 @@ def create_observation(
 def update_observation(
     observation_id: UUID,
     observation: ObservationUpdate,
-    service: ObservationService = Depends(get_observation_service),
+    service: ObservationService = Depends(
+        get_observation_service,
+    ),
 ) -> ObservationResponse:
+
     return service.update_observation(
         observation_id=observation_id,
         data=observation,
@@ -104,7 +149,15 @@ def update_observation(
 )
 def delete_observation(
     observation_id: UUID,
-    service: ObservationService = Depends(get_observation_service),
+    service: ObservationService = Depends(
+        get_observation_service,
+    ),
 ) -> Response:
-    service.delete_observation(observation_id)
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+    service.delete_observation(
+        observation_id,
+    )
+
+    return Response(
+        status_code=status.HTTP_204_NO_CONTENT,
+    )
