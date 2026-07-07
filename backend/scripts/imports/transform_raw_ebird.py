@@ -59,7 +59,7 @@ REQUIRED_COLUMNS = [
 ]
 
 
-def main() -> None:
+def transform_raw_ebird() -> None:
 
     print("Loading eBird taxonomy...")
 
@@ -114,4 +114,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    transform_raw_ebird()

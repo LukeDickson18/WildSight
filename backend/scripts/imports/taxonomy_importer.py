@@ -19,7 +19,7 @@ DATA_FILE = (
 )
 
 
-def load_taxonomy() -> None:
+def import_taxonomy() -> None:
     df = pd.read_csv(DATA_FILE)
 
     session: Session = SessionLocal()

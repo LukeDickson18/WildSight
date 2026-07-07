@@ -5,7 +5,7 @@ from app.db.session import SessionLocal
 from app.models.country import Country
 from app.models.species import Species
 from app.models.species_country import SpeciesCountry
-from app.services.ebird import EBirdClient
+from backend.app.enrichment.ebird import EBirdClient
 
 # --------------------------------------------------
 # Countries to load

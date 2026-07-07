@@ -1,10 +1,10 @@
 from app.db.database import SessionLocal
-from app.services.observation_enrichment_service import (
+from backend.app.enrichment.observation import (
     ObservationEnrichmentService,
 )
 
 
-def main():
+def enrich_observations():
 
     db = SessionLocal()
 

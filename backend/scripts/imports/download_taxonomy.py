@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from app.services.ebird import EBirdClient
+from backend.app.enrichment.ebird import EBirdClient
 
 
-def main():
+def download_taxonomy():
 
     client = EBirdClient()
 
