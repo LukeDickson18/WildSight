@@ -4,7 +4,7 @@ from geoalchemy2.shape import to_shape
 
 from app.db.session import SessionLocal
 from app.models.location import Location
-from backend.app.enrichment.location import reverse_geocode
+from app.enrichment.location import reverse_geocode
 
 
 def enrich_locations():
@@ -44,4 +44,4 @@ def enrich_locations():
 
 
 if __name__ == "__main__":
-    enrich()
+    enrich_locations()
