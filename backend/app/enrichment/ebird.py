@@ -96,3 +96,58 @@ class EBirdClient:
         )
 
         return response.json()
+    
+    def get_hotspots(
+        self,
+        region_code: str,
+        fmt: str = "csv",
+    ):
+        """
+        Retrieve all hotspots for an eBird region.
+
+        Parameters
+        ----------
+        region_code : str
+            eBird region code (e.g. ZA, ZA-WC).
+
+        fmt : str
+            Response format ("csv" or "json").
+
+        Returns
+        -------
+        str | list
+            Hotspot data.
+        """
+
+        response = self._get(
+            f"ref/hotspot/{region_code}",
+            {"fmt": fmt},
+        )
+
+        return response.text if fmt == "csv" else response.json()
+    
+    def download_hotspots(
+        self,
+        region_code: str,
+        output_path: Path,
+    ):
+            """
+            Download hotspot CSV for a region.
+            """
+
+            hotspots = self.get_hotspots(
+                region_code=region_code,
+                fmt="csv",
+            )
+
+            output_path.parent.mkdir(
+                parents=True,
+                exist_ok=True,
+            )
+
+            output_path.write_text(
+                hotspots,
+                encoding="utf-8",
+            )
+
+            print(f"✓ Saved hotspots to {output_path}")
