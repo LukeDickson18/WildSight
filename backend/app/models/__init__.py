@@ -7,3 +7,5 @@ from app.models.observation import Observation
 from app.models.country import Country
 from app.models.species_country import SpeciesCountry
 from app.models.weather import Weather
+from app.models.astronomy import Astronomy
+from app.models.hotspot import Hotspot

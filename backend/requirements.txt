@@ -19,6 +19,24 @@ python-dotenv
 
 pandas
 
+# Geospatial libraries for handling geographic data and performing spatial operations.
 geoalchemy2
 
+# Shapely is a library for manipulation and analysis of planar geometric objects. 
+# It is used for geometric operations such as calculating distances, areas, and intersections, 
+# which are essential for spatial data processing in wildlife observation applications.
+shapely==2.1.1
+
+# httpx is an asynchronous HTTP client for Python, which allows for making HTTP 
+#requests in a non-blocking manner.
 httpx==0.28.1
+
+#Astral is used for calculating sunrise and sunset times based on location and date. 
+#It provides accurate solar calculations, which are essential for determining the 
+#best times for wildlife observations.
+astral==3.2 
+
+# Geopy is a Python client for several popular geocoding web services. 
+# It simplifies the process of converting addresses into geographic coordinates 
+# (latitude and longitude) and vice versa, which is crucial for mapping wildlife observations.
+geopy==2.4.1

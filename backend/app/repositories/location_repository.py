@@ -1,7 +1,7 @@
+from app.models import Location 
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from geoalchemy2.functions import ST_X, ST_Y
-from app.models.location import Location
 
 
 class LocationRepository:
@@ -37,3 +37,9 @@ class LocationRepository:
         latitude, longitude = result
 
         return float(latitude), float(longitude)
+    
+    def update(self, location: Location) -> Location:
+        self.db.add(location)
+        self.db.commit()
+        self.db.refresh(location)
+        return location

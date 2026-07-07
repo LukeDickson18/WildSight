@@ -77,6 +77,37 @@ class Location(Base):
         nullable=False,
     )
 
+    # Derived environmental information
+    elevation: Mapped[float | None] = mapped_column(
+        Float,
+        nullable=True,
+    )
+
+    elevation_source: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    elevation_enriched_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
+
+    biome: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    habitat: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    protected_area: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True,
+    )
+    
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
