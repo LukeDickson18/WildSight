@@ -13,4 +13,4 @@ def download_taxonomy():
 
 
 if __name__ == "__main__":
-    main()
+    download_taxonomy()
