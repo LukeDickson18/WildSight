@@ -1,4 +1,4 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, SettingsConfigDict, Field
 
 
 class Settings(BaseSettings):
@@ -12,14 +12,21 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
 
-    cors_origins: list[str] = [
+    cors_origins: list[str] = Field(
+        default_factory=lambda: [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
-    ]
-
-    open_meteo_base_url: str = (
-    "https://archive-api.open-meteo.com/v1/archive"
+        ]
     )
+
+    open_meteo_archive_url: str = (
+        "https://archive-api.open-meteo.com/v1/archive"
+    )
+
+    open_meteo_forecast_url: str = (
+        "https://api.open-meteo.com/v1/forecast"
+    )
+    
     open_meteo_timeout: int = 20
 
     hotspot_link_distance_m: int = 1000

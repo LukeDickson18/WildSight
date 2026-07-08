@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from app.db.session import SessionLocal
-from app.enrichment.weather import WeatherService
+from app.services.weather.historical_weather_service import HistoricalWeatherService
 from app.models.observation import Observation
 from app.repositories.weather import  WeatherRepository
 
@@ -15,7 +15,7 @@ BATCH_SIZE = 100
 def enrich_observations() -> None:
     db = SessionLocal()
 
-    weather_service = WeatherService()
+    weather_service = HistoricalWeatherService()
     weather_repository = WeatherRepository(db)
 
     try:
@@ -61,7 +61,7 @@ def enrich_observations() -> None:
                     weather = weather_cache[cache_key]
 
                 else:
-                    weather_data = weather_service.get_weather(
+                    weather_data = weather_service.get_historical_weather(
                         latitude=latitude,
                         longitude=longitude,
                         observation_datetime=observation.observation_datetime,

@@ -13,6 +13,7 @@ import PageHeader from "../components/ui/PageHeader";
 import Section from "../components/ui/Section";
 import StatCard from "../components/ui/StatCard";
 
+import DashboardWeatherCard from "../components/dashboard/dashboardWeatherCard";
 import MapPreview from "../components/MapPreview";
 import RecentSightings from "../components/RecentSightings";
 
@@ -55,13 +56,13 @@ function DashboardPage() {
     );
   }
 
-  if (error) {
+  if (error || !dashboard) {
     return (
       <MainLayout>
         <PageHeader title="Dashboard" />
 
         <Card className="p-8 text-center text-red-600">
-          {error}
+          {error ?? "Unable to load dashboard."}
         </Card>
       </MainLayout>
     );
@@ -70,19 +71,19 @@ function DashboardPage() {
   const stats = [
     {
       title: "Observations",
-      value: dashboard?.total_observations ?? 0,
+      value: dashboard.total_observations,
     },
     {
       title: "Species Seen",
-      value: dashboard?.species_seen ?? 0,
+      value: dashboard.species_seen,
     },
     {
       title: "Hotspots Visited",
-      value: dashboard?.hotspots_visited ?? 0,
+      value: dashboard.hotspots_visited,
     },
     {
       title: "Countries Visited",
-      value: dashboard?.countries_visited ?? 0,
+      value: dashboard.countries_visited,
     },
   ];
 
@@ -113,16 +114,9 @@ function DashboardPage() {
 
       <Section title="Today's Summary">
         <div className="grid gap-6 lg:grid-cols-3">
-          <Card>
-            <h3 className="mb-4 text-xl font-semibold">
-              Weather Today
-            </h3>
-
-            <div className="space-y-2 text-slate-600">
-              <p>☀️ Coming Soon</p>
-              <p>Environmental enrichment will appear here.</p>
-            </div>
-          </Card>
+          <DashboardWeatherCard
+            weather={dashboard.weather}
+          />
 
           <Card className="lg:col-span-2">
             <h3 className="mb-4 text-xl font-semibold">
