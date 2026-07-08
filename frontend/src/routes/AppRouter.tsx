@@ -10,6 +10,7 @@ import SpeciesDetailPage from "../pages/SpeciesDetailPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ObservationsPage from "../pages/ObservationPage";
 import NewObservationPage from "../pages/NewObservationPage";
+import MapPage from "../pages/MapPage";
 
 function AppRouter() {
   return (
@@ -64,7 +65,14 @@ function AppRouter() {
             </ProtectedRoute>
           }
         />
-
+        <Route
+          path="/map"
+          element={
+            <ProtectedRoute>
+              <MapPage />
+            </ProtectedRoute>
+          }
+        />
         {/* Fallback route */}
         <Route path="*" element={<NotFoundPage />} />
 

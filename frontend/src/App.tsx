@@ -1,11 +1,14 @@
 import AppRouter from "./routes/AppRouter";
 import { AuthProvider } from "./auth/AuthProvider";
+import { MapProvider } from "./context/MapContext";
 
 function App() {
   return (
-    <AuthProvider>
-      <AppRouter />
-    </AuthProvider>
+    <MapProvider>
+      <AuthProvider>
+        <AppRouter />
+      </AuthProvider>
+    </MapProvider>
   );
 }
 
