@@ -5,8 +5,14 @@ from sqlalchemy.orm import Session, selectinload
 
 from app.models.country import Country
 from app.models.family import Family
+from app.models.order import Order
 from app.models.species import Species
 from app.models.species_country import SpeciesCountry
+from app.schemas.species import (
+    SpeciesExplorerGroup,
+    SpeciesExplorerResponse,
+    SpeciesExplorerSpecies,
+)
 
 COUNTRY_CODE = "ZA"
 
@@ -129,3 +135,71 @@ class SpeciesRepository:
         species = self.db.scalars(query).all()
 
         return species, total or 0
+
+    def get_species_explorer(self) -> SpeciesExplorerResponse:
+        """
+        Returns all South African species grouped by taxonomic order.
+        """
+
+        query = (
+            select(Species)
+            .join(
+                SpeciesCountry,
+                Species.id == SpeciesCountry.species_id,
+            )
+            .join(
+                Country,
+                Country.id == SpeciesCountry.country_id,
+            )
+            .join(
+                Family,
+                Species.family_id == Family.id,
+            )
+            .join(
+                Order,
+                Family.order_id == Order.id,
+            )
+            .options(
+                selectinload(Species.family).selectinload(Family.order)
+            )
+            .where(
+                Country.iso_code == COUNTRY_CODE,
+            )
+            .order_by(
+                Order.taxon_order,
+                Species.common_name,
+            )
+        )
+
+        species = self.db.scalars(query).all()
+
+        groups: list[SpeciesExplorerGroup] = []
+        current_group: SpeciesExplorerGroup | None = None
+        current_order_id: UUID | None = None
+
+        for bird in species:
+            order = bird.family.order
+
+            if current_order_id != order.id:
+                current_order_id = order.id
+
+                current_group = SpeciesExplorerGroup(
+                    name=order.common_name or order.name,
+                    scientific_name=order.name,
+                    species=[],
+                )
+
+                groups.append(current_group)
+
+            current_group.species.append(
+                SpeciesExplorerSpecies(
+                    id=bird.id,
+                    common_name=bird.common_name,
+                    image_url=bird.image_url,
+                    thumbnail_url=bird.thumbnail_url,
+                )
+            )
+
+        return SpeciesExplorerResponse(
+            groups=groups,
+        )

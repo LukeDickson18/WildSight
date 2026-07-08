@@ -8,6 +8,12 @@ from app.repositories.species.species_repository import SpeciesRepository
 from app.schemas.species.species import SpeciesListResponse, SpeciesResponse
 from app.services.species import SpeciesService
 
+from app.schemas.species import (
+    SpeciesExplorerResponse,
+    SpeciesListResponse,
+    SpeciesResponse,
+)
+
 router = APIRouter(
     prefix="/species",
     tags=["Species"],
@@ -55,6 +61,15 @@ def search_species(
         page_size=page_size,
     )
 
+@router.get(
+    "/explorer",
+    response_model=SpeciesExplorerResponse,
+    summary="Get species explorer",
+)
+def get_species_explorer(
+    service: SpeciesService = Depends(get_species_service),
+) -> SpeciesExplorerResponse:
+    return service.get_species_explorer()
 
 @router.get(
     "/{species_id}",

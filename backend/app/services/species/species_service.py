@@ -4,6 +4,7 @@ from fastapi import HTTPException, status
 
 from app.repositories.species.species_repository import SpeciesRepository
 from app.schemas.species.species import SpeciesListResponse, SpeciesResponse
+from app.schemas.species import SpeciesExplorerResponse
 
 
 class SpeciesService:
@@ -59,3 +60,6 @@ class SpeciesService:
             page=page,
             page_size=page_size,
         )
+    
+    def get_species_explorer(self) -> SpeciesExplorerResponse:
+        return self.repository.get_species_explorer()
