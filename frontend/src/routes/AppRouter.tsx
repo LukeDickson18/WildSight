@@ -6,6 +6,7 @@ import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import DashboardPage from "../pages/DashboardPage";
 import SpeciesPage from "../pages/SpeciesPage";
+import SpeciesDetailPage from "../pages/SpeciesDetailPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ObservationsPage from "../pages/ObservationPage";
 import NewObservationPage from "../pages/NewObservationPage";
@@ -36,6 +37,16 @@ function AppRouter() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/species/:id"
+          element={
+            <ProtectedRoute>
+              <SpeciesDetailPage />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/observations"
           element={
@@ -43,7 +54,8 @@ function AppRouter() {
               <ObservationsPage />
             </ProtectedRoute>
           }
-        /> 
+        />
+
         <Route
           path="/observations/new"
           element={
@@ -51,10 +63,11 @@ function AppRouter() {
               <NewObservationPage />
             </ProtectedRoute>
           }
-        /> 
+        />
 
         {/* Fallback route */}
         <Route path="*" element={<NotFoundPage />} />
+
       </Routes>
     </BrowserRouter>
   );

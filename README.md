@@ -207,3 +207,9 @@ docker compose exec backend python -m scripts.enrichment.elevation
 docker compose exec backend python -m scripts.enrichment.weather
 docker compose exec backend python -m scripts.enrichment.astronomy
 docker compose exec backend python -m scripts.enrichment.hotspot
+
+### Alembic
+## Generate Migration
+docker compose exec backend alembic revision --autogenerate -m "migration name"
+## Update head
+docker compose exec backend alembic upgrade head 
