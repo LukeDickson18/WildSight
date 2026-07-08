@@ -6,6 +6,7 @@ from .observations import router as observation_router
 from .species import router as species_router
 from .locations import router as location_router
 from .users import router as user_router
+from .weather import router as weather_router
 
 __all__ = [
     "auth_router",
@@ -16,4 +17,5 @@ __all__ = [
     "species_router",
     "location_router",
     "user_router",
+    "weather_router",
 ]

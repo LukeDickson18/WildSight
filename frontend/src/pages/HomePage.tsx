@@ -1,7 +1,7 @@
 import MainLayout from "../layouts/MainLayout";
 
 import HeroSection from "../components/HeroSection";
-import RecentSightings from "../components/RecentSightings";
+import RecentSightings from "../components/RecentObservations";
 import MapPreview from "../components/MapPreview";
 
 import Section from "../components/ui/Section";

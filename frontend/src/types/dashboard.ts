@@ -1,4 +1,4 @@
-export interface DashboardWeather {
+export interface DashboardWeatherData {
   temperature: number;
   apparent_temperature: number;
   relative_humidity: number;
@@ -18,5 +18,5 @@ export interface DashboardResponse {
   hotspots_visited: number;
   countries_visited: number;
 
-  weather: DashboardWeather;
+  weather: DashboardWeatherData;
 }
