@@ -1,21 +1,5 @@
 import { request } from "./client";
-
-export interface ExplorerSpecies {
-    id: string;
-    common_name: string;
-    image_url: string | null;
-    thumbnail_url: string | null;
-}
-
-export interface ExplorerGroup {
-    name: string;
-    scientific_name: string;
-    species: ExplorerSpecies[];
-}
-
-export interface ExplorerResponse {
-    groups: ExplorerGroup[];
-}
+import type { ExplorerResponse } from "../types/speciesExplorer";
 
 export function getSpeciesExplorer(): Promise<ExplorerResponse> {
     return request("/species/explorer");
