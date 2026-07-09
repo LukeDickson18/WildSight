@@ -5,11 +5,3 @@ export const radiusOptions = [
   { value: "100", label: "100 km" },
   { value: "250", label: "250 km" },
 ];
-
-export const countryOptions = [
-  { value: "South Africa", label: "South Africa" },
-];
-
-export const hotspotOptions = [
-  { value: "Any", label: "Any Hotspot" },
-];

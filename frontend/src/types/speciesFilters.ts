@@ -1,37 +1,43 @@
 export interface SpeciesFilterState {
-    search: string;
+  search: string;
 
-    useMyLocation: boolean;
-    radius: string;
+  useMyLocation: boolean;
+  radius: string;
 
-    country: string;
-    hotspot: string;
+  countryId: string;
+  orderId: string;
+  familyId: string;
+  hotspotId: string;
 }
 
 export const defaultSpeciesFilters: SpeciesFilterState = {
-    search: "",
-    useMyLocation: false,
-    radius: "50",
-    country: "South Africa",
-    hotspot: "Any",
+  search: "",
+
+  useMyLocation: false,
+  radius: "50",
+
+  countryId: "",
+  orderId: "",
+  familyId: "",
+  hotspotId: "",
 };
 
 /**
  * Filters sent to the backend Species Explorer API.
  */
 export interface SpeciesExplorerFilters {
-    search?: string;
+  search?: string;
 
-    orderId?: string;
-    familyId?: string;
-    countryId?: string;
+  orderId?: string;
+  familyId?: string;
+  countryId?: string;
 
-    latitude?: number;
-    longitude?: number;
-    radiusKm?: number;
+  latitude?: number;
+  longitude?: number;
+  radiusKm?: number;
 
-    hotspotId?: string;
+  hotspotId?: string;
 
-    page?: number;
-    pageSize?: number;
+  page?: number;
+  pageSize?: number;
 }

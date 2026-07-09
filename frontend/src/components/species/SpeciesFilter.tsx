@@ -1,7 +1,11 @@
 import Card from "../ui/Card";
 import Select from "../ui/Select";
 import Switch from "../ui/Switch";
-import { radiusOptions, countryOptions, hotspotOptions } from "../../constants/speciesFilters";
+
+import { radiusOptions } from "../../constants/speciesFilters";
+
+import { useCountries } from "../../hooks/Lookup/useCountries";
+import { useHotspots } from "../../hooks/Lookup/useHotspots";
 
 type Props = {
   useMyLocation: boolean;
@@ -25,6 +29,31 @@ function SpeciesFilters({
   onCountryChange,
   onHotspotChange,
 }: Props) {
+  const { data: countries = [] } = useCountries();
+  const { data: hotspots = [] } = useHotspots();
+
+  const countryOptions = [
+    {
+      value: "",
+      label: "All Countries",
+    },
+    ...countries.map((country) => ({
+      value: country.id,
+      label: country.name,
+    })),
+  ];
+
+  const hotspotOptions = [
+    {
+      value: "",
+      label: "All Hotspots",
+    },
+    ...hotspots.map((hotspot) => ({
+      value: hotspot.id,
+      label: hotspot.name,
+    })),
+  ];
+
   return (
     <Card className="mb-8">
       <div className="flex flex-col gap-8">
@@ -42,7 +71,6 @@ function SpeciesFilters({
             options={radiusOptions}
             disabled={!useMyLocation}
             onChange={(e) => onRadiusChange(e.target.value)}
-
           />
 
           <Select

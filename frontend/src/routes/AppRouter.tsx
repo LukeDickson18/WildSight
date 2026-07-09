@@ -9,7 +9,7 @@ import SpeciesPage from "../pages/SpeciesPage";
 import SpeciesDetailPage from "../pages/SpeciesDetailPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ObservationsPage from "../pages/ObservationPage";
-import NewObservationPage from "../pages/NewObservationPage";
+
 import MapPage from "../pages/MapPage";
 
 function AppRouter() {
@@ -57,14 +57,6 @@ function AppRouter() {
           }
         />
 
-        <Route
-          path="/observations/new"
-          element={
-            <ProtectedRoute>
-              <NewObservationPage />
-            </ProtectedRoute>
-          }
-        />
         <Route
           path="/map"
           element={
