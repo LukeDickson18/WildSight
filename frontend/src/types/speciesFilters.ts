@@ -1,8 +1,12 @@
 export interface SpeciesFilterState {
   search: string;
-
   useMyLocation: boolean;
+  
+  latitude?: number;
+  longitude?: number;
+
   radius: string;
+
 
   countryId: string;
   orderId: string;

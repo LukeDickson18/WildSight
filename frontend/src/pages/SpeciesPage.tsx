@@ -11,6 +11,7 @@ import Container from "../components/ui/Container";
 import PageHeader from "../components/ui/PageHeader";
 
 import { useSpeciesExplorer } from "../hooks/useSpeciesExplorer";
+import { useCurrentLocation } from "../hooks/useCurrentLocation";
 
 import {
   defaultSpeciesFilters,
@@ -36,6 +37,8 @@ function SpeciesPage() {
     error,
   } = useSpeciesExplorer(apiFilters);
 
+  const { findMe } = useCurrentLocation();
+
   function updateFilter<
     K extends keyof SpeciesFilterState,
   >(key: K, value: SpeciesFilterState[K]) {
@@ -52,6 +55,11 @@ function SpeciesPage() {
       countryId: uiFilters.countryId || undefined,
       orderId: uiFilters.orderId || undefined,
       familyId: uiFilters.familyId || undefined,
+
+      latitude: uiFilters.latitude,
+      longitude: uiFilters.longitude,
+      radiusKm: Number(uiFilters.radius),
+
       hotspotId: uiFilters.hotspotId || undefined,
 
       page: 1,
@@ -62,6 +70,34 @@ function SpeciesPage() {
   function handleSearch() {
     setApiFilters(buildExplorerFilters());
   }
+
+  useEffect(() => {
+    async function loadLocation() {
+      if (!uiFilters.useMyLocation) {
+        updateFilter("latitude", undefined);
+        updateFilter("longitude", undefined);
+        return;
+      }
+
+      try {
+        const location = await findMe();
+
+        updateFilter("latitude", location.lat);
+        updateFilter("longitude", location.lng);
+      } catch (error) {
+        console.error(
+          "Failed to get current location:",
+          error,
+        );
+
+        updateFilter("useMyLocation", false);
+        updateFilter("latitude", undefined);
+        updateFilter("longitude", undefined);
+      }
+    }
+
+    loadLocation();
+  }, [uiFilters.useMyLocation, findMe]);
 
   useEffect(() => {
     const filters = buildExplorerFilters();
@@ -75,6 +111,8 @@ function SpeciesPage() {
     uiFilters.orderId,
     uiFilters.familyId,
     uiFilters.hotspotId,
+    uiFilters.latitude,
+    uiFilters.longitude,
     uiFilters.radius,
     uiFilters.useMyLocation,
   ]);

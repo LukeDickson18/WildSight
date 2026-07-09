@@ -1,10 +1,13 @@
 from uuid import UUID
 
+from geoalchemy2.functions import ST_DWithin
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session, selectinload
 
 from app.models.country import Country
 from app.models.family import Family
+from app.models.location import Location
+from app.models.observation import Observation
 from app.models.order import Order
 from app.models.species import Species
 from app.models.species_country import SpeciesCountry
@@ -18,7 +21,10 @@ COUNTRY_CODE = "ZA"
 
 
 class SpeciesRepository:
-    def __init__(self, db: Session):
+    def __init__(
+        self,
+        db: Session,
+    ):
         self.db = db
 
     def get_by_id(
@@ -50,23 +56,41 @@ class SpeciesRepository:
         self,
         filters: SpeciesExplorerFilters,
     ) -> SpeciesExplorerResponse:
+
         query = self._build_base_query()
 
-        query = self._apply_filters(query, filters)
-
-        total = self.db.scalar(
-            select(func.count())
-            .select_from(query.subquery())
+        query = self._apply_search_filter(
+            query,
+            filters,
         )
 
-        query = (
-            query
-            .order_by(
-                Order.taxon_order,
-                Species.common_name,
-            )
-            .offset((filters.page - 1) * filters.page_size)
-            .limit(filters.page_size)
+        query = self._apply_taxonomy_filters(
+            query,
+            filters,
+        )
+
+        query = self._apply_country_filter(
+            query,
+            filters,
+        )
+
+        query = self._apply_location_filter(
+            query,
+            filters,
+        )
+
+        query = self._apply_hotspot_filter(
+            query,
+            filters,
+        )
+
+        total = self._build_count_query(query)
+
+        query = self._apply_sorting(query)
+
+        query = self._apply_pagination(
+            query,
+            filters,
         )
 
         species = self.db.scalars(query).all()
@@ -76,10 +100,16 @@ class SpeciesRepository:
                 self._to_species_response(bird)
                 for bird in species
             ],
-            total=total or 0,
+            total=total,
             page=filters.page,
             page_size=filters.page_size,
         )
+
+    #
+    # ------------------------------------------------------------------
+    # Query Builders
+    # ------------------------------------------------------------------
+    #
 
     def _build_base_query(self):
         return (
@@ -108,20 +138,52 @@ class SpeciesRepository:
             )
         )
 
-    def _apply_filters(
+    def _build_count_query(
+        self,
+        query,
+    ) -> int:
+        return (
+            self.db.scalar(
+                select(func.count()).select_from(
+                    query.subquery()
+                )
+            )
+            or 0
+        )
+
+    #
+    # ------------------------------------------------------------------
+    # Filters
+    # ------------------------------------------------------------------
+    #
+
+    def _apply_search_filter(
         self,
         query,
         filters: SpeciesExplorerFilters,
     ):
-        if filters.search:
-            query = query.where(
-                or_(
-                    Species.common_name.ilike(f"%{filters.search}%"),
-                    Species.scientific_name.ilike(f"%{filters.search}%"),
-                    Species.ebird_code.ilike(f"%{filters.search}%"),
-                )
-            )
+        if not filters.search:
+            return query
 
+        return query.where(
+            or_(
+                Species.common_name.ilike(
+                    f"%{filters.search}%"
+                ),
+                Species.scientific_name.ilike(
+                    f"%{filters.search}%"
+                ),
+                Species.ebird_code.ilike(
+                    f"%{filters.search}%"
+                ),
+            )
+        )
+
+    def _apply_taxonomy_filters(
+        self,
+        query,
+        filters: SpeciesExplorerFilters,
+    ):
         if filters.order_id:
             query = query.where(
                 Order.id == filters.order_id,
@@ -132,45 +194,110 @@ class SpeciesRepository:
                 Family.id == filters.family_id,
             )
 
+        return query
+
+    def _apply_country_filter(
+        self,
+        query,
+        filters: SpeciesExplorerFilters,
+    ):
         if filters.country_id:
             query = query.where(
                 Country.id == filters.country_id,
             )
 
-        #
-        # GPS filtering
-        #
+        return query
 
-        if (
-            filters.latitude is not None
-            and filters.longitude is not None
-        ):
-            # Implement PostGIS filtering later
-            pass
+    def _apply_location_filter(
+        self,
+        query,
+        filters: SpeciesExplorerFilters,
+    ):
+        """
+        Placeholder for future PostGIS filtering.
 
-        #
-        # Hotspot filtering
-        #
+        This will eventually:
+            Species
+                -> Observation
+                -> Location
 
-        if filters.hotspot_id:
-            # Implement hotspot filtering later
-            pass
+        and use ST_DWithin() to return only species
+        observed within the requested radius.
+        """
 
         return query
 
+    def _apply_hotspot_filter(
+        self,
+        query,
+        filters: SpeciesExplorerFilters,
+    ):
+        """
+        Placeholder for future hotspot filtering.
+
+        Will join through Observation and filter
+        by Observation.hotspot_id.
+        """
+
+        return query
+    #
+    # ------------------------------------------------------------------
+    # Query Helpers
+    # ------------------------------------------------------------------
+    #
+
+    def _apply_sorting(
+        self,
+        query,
+    ):
+        """
+        Apply the default ordering for the Species Explorer.
+        """
+
+        return query.order_by(
+            Order.taxon_order,
+            Species.common_name,
+        )
+
+    def _apply_pagination(
+        self,
+        query,
+        filters: SpeciesExplorerFilters,
+    ):
+        """
+        Apply pagination to the query.
+        """
+
+        return (
+            query.offset(
+                (filters.page - 1) * filters.page_size
+            )
+            .limit(filters.page_size)
+        )
+
+    #
+    # ------------------------------------------------------------------
+    # Response Mapping
+    # ------------------------------------------------------------------
+    #
+
     @staticmethod
     def _to_species_response(
-        bird: Species,
+        species: Species,
     ) -> SpeciesExplorerSpecies:
+        """
+        Convert a Species ORM model into the API response model.
+        """
+
         return SpeciesExplorerSpecies(
-            id=bird.id,
-            common_name=bird.common_name,
-            scientific_name=bird.scientific_name,
-            image_url=bird.image_url,
-            thumbnail_url=bird.thumbnail_url,
-            family_common_name=bird.family.common_name,
+            id=species.id,
+            common_name=species.common_name,
+            scientific_name=species.scientific_name,
+            image_url=species.image_url,
+            thumbnail_url=species.thumbnail_url,
+            family_common_name=species.family.common_name,
             order_common_name=(
-                bird.family.order.common_name
-                or bird.family.order.name
+                species.family.order.common_name
+                or species.family.order.name
             ),
         )
