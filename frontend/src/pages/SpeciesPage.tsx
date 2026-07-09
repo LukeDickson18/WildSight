@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import MainLayout from "../layouts/MainLayout";
@@ -12,6 +12,7 @@ import PageHeader from "../components/ui/PageHeader";
 
 import { useSpeciesExplorer } from "../hooks/useSpeciesExplorer";
 import { useCurrentLocation } from "../hooks/useCurrentLocation";
+import Pagination from "../components/ui/pagination";
 
 import {
   defaultSpeciesFilters,
@@ -22,53 +23,27 @@ import {
 function SpeciesPage() {
   const navigate = useNavigate();
 
+  const { findMe } = useCurrentLocation();
+
   const [uiFilters, setUiFilters] =
     useState<SpeciesFilterState>(defaultSpeciesFilters);
 
-  const [apiFilters, setApiFilters] =
-    useState<SpeciesExplorerFilters>({
-      page: 1,
-      pageSize: 25,
-    });
-
-  const {
-    data,
-    isLoading,
-    error,
-  } = useSpeciesExplorer(apiFilters);
-
-  const { findMe } = useCurrentLocation();
+  const [search, setSearch] = useState("");
 
   function updateFilter<
     K extends keyof SpeciesFilterState,
-  >(key: K, value: SpeciesFilterState[K]) {
+  >(
+    key: K,
+    value: SpeciesFilterState[K],
+  ) {
     setUiFilters((previous) => ({
       ...previous,
       [key]: value,
     }));
   }
 
-  function buildExplorerFilters(): SpeciesExplorerFilters {
-    return {
-      search: uiFilters.search || undefined,
-
-      countryId: uiFilters.countryId || undefined,
-      orderId: uiFilters.orderId || undefined,
-      familyId: uiFilters.familyId || undefined,
-
-      latitude: uiFilters.latitude,
-      longitude: uiFilters.longitude,
-      radiusKm: Number(uiFilters.radius),
-
-      hotspotId: uiFilters.hotspotId || undefined,
-
-      page: 1,
-      pageSize: 25,
-    };
-  }
-
   function handleSearch() {
-    setApiFilters(buildExplorerFilters());
+    setSearch(uiFilters.search);
   }
 
   useEffect(() => {
@@ -90,32 +65,74 @@ function SpeciesPage() {
           error,
         );
 
-        updateFilter("useMyLocation", false);
-        updateFilter("latitude", undefined);
-        updateFilter("longitude", undefined);
+        updateFilter(
+          "useMyLocation",
+          false,
+        );
+
+        updateFilter(
+          "latitude",
+          undefined,
+        );
+
+        updateFilter(
+          "longitude",
+          undefined,
+        );
       }
     }
 
     loadLocation();
   }, [uiFilters.useMyLocation, findMe]);
 
-  useEffect(() => {
-    const filters = buildExplorerFilters();
+  const explorerFilters =
+    useMemo<SpeciesExplorerFilters>(
+      () => ({
+        search: search || undefined,
 
-    setApiFilters((previous) => ({
-      ...filters,
-      search: previous.search,
-    }));
-  }, [
-    uiFilters.countryId,
-    uiFilters.orderId,
-    uiFilters.familyId,
-    uiFilters.hotspotId,
-    uiFilters.latitude,
-    uiFilters.longitude,
-    uiFilters.radius,
-    uiFilters.useMyLocation,
-  ]);
+        countryId:
+          uiFilters.countryId || undefined,
+
+        orderId:
+          uiFilters.orderId || undefined,
+
+        familyId:
+          uiFilters.familyId || undefined,
+
+        latitude: uiFilters.latitude,
+        longitude: uiFilters.longitude,
+
+        radiusKm: Number(
+          uiFilters.radius,
+        ),
+
+        hotspotId:
+          uiFilters.hotspotId || undefined,
+
+        page: uiFilters.page,
+        pageSize: uiFilters.pageSize,
+      }),
+      [
+        search,
+        uiFilters.countryId,
+        uiFilters.orderId,
+        uiFilters.familyId,
+        uiFilters.hotspotId,
+        uiFilters.latitude,
+        uiFilters.longitude,
+        uiFilters.radius,
+        uiFilters.page,
+        uiFilters.pageSize,
+      ]
+    );
+
+  const {
+    data,
+    isLoading,
+    error,
+  } = useSpeciesExplorer(
+    explorerFilters,
+  );
 
   return (
     <MainLayout>
@@ -126,36 +143,61 @@ function SpeciesPage() {
         />
 
         <SpeciesFilters
-          useMyLocation={uiFilters.useMyLocation}
+          useMyLocation={
+            uiFilters.useMyLocation
+          }
           radius={uiFilters.radius}
           country={uiFilters.countryId}
           order={uiFilters.orderId}
           family={uiFilters.familyId}
           hotspot={uiFilters.hotspotId}
-          onUseMyLocationChange={(value) =>
-            updateFilter("useMyLocation", value)
+          onUseMyLocationChange={(
+            value,
+          ) =>
+            updateFilter(
+              "useMyLocation",
+              value,
+            )
           }
           onRadiusChange={(value) =>
-            updateFilter("radius", value)
+            updateFilter(
+              "radius",
+              value,
+            )
           }
           onCountryChange={(value) =>
-            updateFilter("countryId", value)
+            updateFilter(
+              "countryId",
+              value,
+            )
           }
           onOrderChange={(value) =>
-            updateFilter("orderId", value)
+            updateFilter(
+              "orderId",
+              value,
+            )
           }
           onFamilyChange={(value) =>
-            updateFilter("familyId", value)
+            updateFilter(
+              "familyId",
+              value,
+            )
           }
           onHotspotChange={(value) =>
-            updateFilter("hotspotId", value)
+            updateFilter(
+              "hotspotId",
+              value,
+            )
           }
         />
 
         <SpeciesSearchBar
           value={uiFilters.search}
           onChange={(value) =>
-            updateFilter("search", value)
+            updateFilter(
+              "search",
+              value,
+            )
           }
           onSearch={handleSearch}
         />
@@ -163,11 +205,28 @@ function SpeciesPage() {
         <SpeciesExplorer
           species={data?.items ?? []}
           loading={isLoading}
-          error={error?.message ?? ""}
-          onSpeciesClick={(species) =>
-            navigate(`/species/${species.id}`)
+          error={
+            error?.message ?? ""
+          }
+          onSpeciesClick={(
+            species,
+          ) =>
+            navigate(
+              `/species/${species.id}`,
+            )
           }
         />
+
+        {data && data.total > 0 && (
+          <Pagination
+            page={uiFilters.page}
+            pageSize={uiFilters.pageSize}
+            total={data.total}
+            onPageChange={(page) =>
+              updateFilter("page", page)
+            }
+          />
+        )}
       </Container>
     </MainLayout>
   );

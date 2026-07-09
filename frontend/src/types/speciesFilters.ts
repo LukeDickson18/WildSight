@@ -1,29 +1,36 @@
 export interface SpeciesFilterState {
   search: string;
+
   useMyLocation: boolean;
-  
+
   latitude?: number;
   longitude?: number;
 
   radius: string;
 
-
   countryId: string;
   orderId: string;
   familyId: string;
   hotspotId: string;
+
+  page: number;
+  pageSize: number;
 }
 
 export const defaultSpeciesFilters: SpeciesFilterState = {
   search: "",
 
   useMyLocation: false,
+
   radius: "50",
 
   countryId: "",
   orderId: "",
   familyId: "",
   hotspotId: "",
+
+  page: 1,
+  pageSize: 25,
 };
 
 /**

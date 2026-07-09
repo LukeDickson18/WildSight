@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
-import { getSpeciesExplorer } from "../api/speciesExplorer";
+import { getSpeciesExplorer } from "../api/species";
 
 import type { SpeciesExplorerFilters } from "../types/speciesFilters";
 
