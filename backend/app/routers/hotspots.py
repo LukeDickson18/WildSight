@@ -8,6 +8,7 @@ from app.repositories.hotspots import HotspotRepository
 from app.schemas.hotspots import (
     HotspotListResponse,
     HotspotResponse,
+    NearbyHotspotListResponse,
 )
 from app.services.hotspots import HotspotService
 
@@ -42,22 +43,22 @@ def get_hotspots(
 
 @router.get(
     "/nearby",
-    response_model=HotspotListResponse,
+    response_model=NearbyHotspotListResponse,
     summary="Get nearby hotspots",
 )
 def get_nearby_hotspots(
     latitude: float = Query(..., ge=-90, le=90),
     longitude: float = Query(..., ge=-180, le=180),
     radius: int = Query(
-        5000,
+        5,
         gt=0,
-        le=50000,
-        description="Search radius in metres",
+        le=100,
+        description="Search radius in kilometres",
     ),
     page: int = Query(1, ge=1),
-    page_size: int = Query(50, ge=1, le=100),
+    page_size: int = Query(20, ge=1, le=100),
     service: HotspotService = Depends(get_hotspot_service),
-) -> HotspotListResponse:
+) -> NearbyHotspotListResponse:
     return service.get_nearby_hotspots(
         latitude=latitude,
         longitude=longitude,

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.models.observation import Observation
 from app.repositories.locations import LocationRepository
 from app.repositories.weather import  WeatherRepository
-from app.enrichment.weather import WeatherService
+from app.services.weather.historical_weather_service import HistoricalWeatherService
 
 
 class ObservationEnrichmentService:
@@ -16,7 +16,7 @@ class ObservationEnrichmentService:
 
         self.location_repository = LocationRepository(db)
         self.weather_repository = WeatherRepository(db)
-        self.weather_service = WeatherService()
+        self.weather_service = HistoricalWeatherService()
 
     def enrich_observation(
         self,
@@ -41,7 +41,7 @@ class ObservationEnrichmentService:
 
         latitude, longitude = coordinates
 
-        weather_data = self.weather_service.get_weather(
+        weather_data = self.weather_service.get_historical_weather(
             latitude=latitude,
             longitude=longitude,
             observation_datetime=observation.observation_datetime,

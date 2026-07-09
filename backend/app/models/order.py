@@ -23,6 +23,11 @@ class Order(Base):
         index=True,
     )
 
+    common_name: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
     taxon_order: Mapped[float] = mapped_column(
         Float,
         nullable=False,

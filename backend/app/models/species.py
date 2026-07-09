@@ -1,7 +1,8 @@
 from __future__ import annotations
+
 import uuid
 
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -53,7 +54,43 @@ class Species(Base):
         nullable=False,
         index=True,
     )
-    
+
+    # ---------------------------
+    # iNaturalist metadata
+    # ---------------------------
+
+    inat_taxon_id: Mapped[int | None] = mapped_column(
+        Integer,
+        nullable=True,
+        unique=True,
+        index=True,
+    )
+
+    image_url: Mapped[str | None] = mapped_column(
+        String(500),
+        nullable=True,
+    )
+
+    thumbnail_url: Mapped[str | None] = mapped_column(
+        String(500),
+        nullable=True,
+    )
+
+    image_license: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    image_attribution: Mapped[str | None] = mapped_column(
+        String(500),
+        nullable=True,
+    )
+
+    image_source: Mapped[str | None] = mapped_column(
+        String(50),
+        nullable=True,
+        default="iNaturalist",
+    )
 
     family: Mapped["Family"] = relationship(
         back_populates="species",

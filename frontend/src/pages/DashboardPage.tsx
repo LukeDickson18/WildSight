@@ -11,10 +11,14 @@ import Card from "../components/ui/Card";
 import Divider from "../components/ui/Divider";
 import PageHeader from "../components/ui/PageHeader";
 import Section from "../components/ui/Section";
-import StatCard from "../components/ui/StatCard";
 
-import MapPreview from "../components/MapPreview";
-import RecentSightings from "../components/RecentSightings";
+import DashboardStats from "../components/dashboard/DashboardStats";
+import DashboardMap from "../components/dashboard/DashboardMap";
+import DashboardWeather from "../components/dashboard/DashboardWeather";
+import DashboardNearbyHotspots from "../components/dashboard/DashboardNearbyHotspots";
+import DashboardAnalytics from "../components/dashboard/DashboardAnalytics";
+
+import RecentObservations from "../components/RecentObservations";
 
 function DashboardPage() {
   const { token } = useAuth();
@@ -55,40 +59,17 @@ function DashboardPage() {
     );
   }
 
-  if (error) {
+  if (error || !dashboard) {
     return (
       <MainLayout>
         <PageHeader title="Dashboard" />
 
         <Card className="p-8 text-center text-red-600">
-          {error}
+          {error ?? "Unable to load dashboard."}
         </Card>
       </MainLayout>
     );
   }
-
-  const stats = [
-    {
-      title: "Observations",
-      value: dashboard?.total_observations ?? 0,
-    },
-    {
-      title: "Species Seen",
-      value: dashboard?.species_seen ?? 0,
-    },
-    {
-      title: "Hotspots Visited",
-      value: dashboard?.hotspots_visited ?? 0,
-    },
-    {
-      title: "Countries Visited",
-      value: dashboard?.countries_visited ?? 0,
-    },
-  ];
-
-  const recentActivity = [
-    "Recent observations coming soon...",
-  ];
 
   return (
     <MainLayout>
@@ -98,71 +79,30 @@ function DashboardPage() {
       />
 
       <Section title="Overview">
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {stats.map((stat) => (
-            <StatCard
-              key={stat.title}
-              title={stat.title}
-              value={stat.value}
-            />
-          ))}
-        </div>
+        <DashboardStats dashboard={dashboard} />
       </Section>
 
       <Divider />
 
-      <Section title="Today's Summary">
+      <Section title="Interactive Observation Map">
+        <DashboardMap />
+      </Section>
+
+      <Divider />
+
+      <Section title="Current Conditions">
         <div className="grid gap-6 lg:grid-cols-3">
-          <Card>
-            <h3 className="mb-4 text-xl font-semibold">
-              Weather Today
-            </h3>
-
-            <div className="space-y-2 text-slate-600">
-              <p>☀️ Coming Soon</p>
-              <p>Environmental enrichment will appear here.</p>
-            </div>
-          </Card>
-
-          <Card className="lg:col-span-2">
-            <h3 className="mb-4 text-xl font-semibold">
-              Recent Activity
-            </h3>
-
-            <ul className="space-y-3">
-              {recentActivity.map((activity) => (
-                <li
-                  key={activity}
-                  className="rounded-lg bg-slate-100 p-3"
-                >
-                  {activity}
-                </li>
-              ))}
-            </ul>
-          </Card>
+          <DashboardWeather />
+          <div className="lg:col-span-2">
+            <DashboardNearbyHotspots />
+          </div>
         </div>
       </Section>
 
       <Divider />
 
-      <Section title="Observation Map">
-        <MapPreview />
-      </Section>
-
-      <Divider />
-
-      <Section title="Recent Sightings">
-        <RecentSightings />
-      </Section>
-
-      <Divider />
-
-      <Section title="Species Analytics">
-        <Card className="flex h-64 items-center justify-center">
-          <p className="text-slate-500">
-            Analytics coming soon...
-          </p>
-        </Card>
+      <Section title="Analytics">
+        <DashboardAnalytics />
       </Section>
     </MainLayout>
   );

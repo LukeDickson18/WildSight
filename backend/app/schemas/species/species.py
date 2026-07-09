@@ -31,6 +31,15 @@ class SpeciesResponse(BaseModel):
     scientific_name: str
     category: str
     wildlife_group: str
+
+    # iNaturalist
+    inat_taxon_id: int | None
+    image_url: str | None
+    thumbnail_url: str | None
+    image_license: str | None
+    image_attribution: str | None
+    image_source: str | None
+
     family: FamilyResponse
 
 

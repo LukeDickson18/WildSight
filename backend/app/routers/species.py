@@ -1,11 +1,15 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
 from app.repositories.species.species_repository import SpeciesRepository
-from app.schemas.species.species import SpeciesListResponse, SpeciesResponse
+from app.schemas.species import (
+    SpeciesExplorerFilters,
+    SpeciesExplorerResponse,
+    SpeciesResponse,
+)
 from app.services.species import SpeciesService
 
 router = APIRouter(
@@ -23,37 +27,15 @@ def get_species_service(
 
 
 @router.get(
-    "",
-    response_model=SpeciesListResponse,
-    summary="Get all species",
+    "/explorer",
+    response_model=SpeciesExplorerResponse,
+    summary="Get species explorer",
 )
-def get_species(
-    page: int = Query(1, ge=1),
-    page_size: int = Query(50, ge=1, le=100),
+def get_species_explorer(
+    filters: SpeciesExplorerFilters = Depends(),
     service: SpeciesService = Depends(get_species_service),
-) -> SpeciesListResponse:
-    return service.get_species(
-        page=page,
-        page_size=page_size,
-    )
-
-
-@router.get(
-    "/search",
-    response_model=SpeciesListResponse,
-    summary="Search species",
-)
-def search_species(
-    q: str = Query(..., min_length=1, description="Search by common name, scientific name or eBird code"),
-    page: int = Query(1, ge=1),
-    page_size: int = Query(50, ge=1, le=100),
-    service: SpeciesService = Depends(get_species_service),
-) -> SpeciesListResponse:
-    return service.search_species(
-        query=q,
-        page=page,
-        page_size=page_size,
-    )
+) -> SpeciesExplorerResponse:
+    return service.get_species_explorer(filters)
 
 
 @router.get(
