@@ -6,11 +6,6 @@ from app.schemas.dashboard import (
 from app.services.weather import CurrentWeatherService
 
 
-# Temporary default location (Stellenbosch)
-DEFAULT_LATITUDE = -33.9321
-DEFAULT_LONGITUDE = 18.8602
-
-
 class DashboardService:
     def __init__(
         self,
@@ -20,26 +15,43 @@ class DashboardService:
         self.weather_service = CurrentWeatherService()
 
     def get_dashboard(self) -> DashboardResponse:
-        stats = self.repository.get_dashboard_stats()
+        """
+        Returns only the dashboard statistics.
 
-        current_weather = self.weather_service.get_current_weather(
-            latitude=DEFAULT_LATITUDE,
-            longitude=DEFAULT_LONGITUDE,
-        )
+        Weather is loaded separately based on the current
+        map location.
+        """
+
+        stats = self.repository.get_dashboard_stats()
 
         return DashboardResponse(
             total_observations=stats["total_observations"],
             species_seen=stats["species_seen"],
             hotspots_visited=stats["hotspots_visited"],
             countries_visited=stats["countries_visited"],
-            weather=DashboardWeatherResponse(
-                temperature=current_weather.temperature,
-                apparent_temperature=current_weather.apparent_temperature,
-                relative_humidity=current_weather.relative_humidity,
-                wind_speed=current_weather.wind_speed,
-                wind_direction=current_weather.wind_direction,
-                cloud_cover=current_weather.cloud_cover,
-                precipitation=current_weather.precipitation,
-                weather_description=current_weather.weather_description,
-            ),
+        )
+
+    def get_weather(
+        self,
+        latitude: float,
+        longitude: float,
+    ) -> DashboardWeatherResponse:
+        """
+        Returns the current weather for an arbitrary map location.
+        """
+
+        weather = self.weather_service.get_current_weather(
+            latitude=latitude,
+            longitude=longitude,
+        )
+
+        return DashboardWeatherResponse(
+            temperature=weather.temperature,
+            apparent_temperature=weather.apparent_temperature,
+            relative_humidity=weather.relative_humidity,
+            wind_speed=weather.wind_speed,
+            wind_direction=weather.wind_direction,
+            cloud_cover=weather.cloud_cover,
+            precipitation=weather.precipitation,
+            weather_description=weather.weather_description,
         )

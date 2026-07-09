@@ -6,6 +6,8 @@ from app.repositories.hotspots import HotspotRepository
 from app.schemas.hotspots import (
     HotspotListResponse,
     HotspotResponse,
+    NearbyHotspotListResponse,
+    NearbyHotspotResponse,
 )
 
 
@@ -58,9 +60,9 @@ class HotspotService:
         radius: int,
         page: int,
         page_size: int,
-    ) -> HotspotListResponse:
+    ) -> NearbyHotspotListResponse:
 
-        hotspots, total = self.repository.get_nearby_hotspots(
+        rows, total = self.repository.get_nearby_hotspots(
             latitude=latitude,
             longitude=longitude,
             radius=radius,
@@ -68,7 +70,20 @@ class HotspotService:
             page_size=page_size,
         )
 
-        return HotspotListResponse(
+        hotspots = [
+            NearbyHotspotResponse(
+                id=hotspot.id,
+                ebird_id=hotspot.ebird_id,
+                name=hotspot.name,
+                source=hotspot.source,
+                latitude=hotspot.latitude,
+                longitude=hotspot.longitude,
+                distance_km=round(distance_km, 2),
+            )
+            for hotspot, distance_km in rows
+        ]
+
+        return NearbyHotspotListResponse(
             items=hotspots,
             total=total,
             page=page,
