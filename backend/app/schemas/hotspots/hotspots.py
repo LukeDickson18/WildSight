@@ -10,12 +10,24 @@ class HotspotResponse(BaseModel):
     ebird_id: str
     name: str
     source: str
+
     latitude: float
     longitude: float
 
 
+class NearbyHotspotResponse(HotspotResponse):
+    distance_km: float
+
+
 class HotspotListResponse(BaseModel):
     items: list[HotspotResponse]
+    total: int
+    page: int
+    page_size: int
+
+
+class NearbyHotspotListResponse(BaseModel):
+    items: list[NearbyHotspotResponse]
     total: int
     page: int
     page_size: int

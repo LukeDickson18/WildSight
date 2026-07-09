@@ -92,10 +92,7 @@ function DashboardPage() {
 
       <Section title="Current Conditions">
         <div className="grid gap-6 lg:grid-cols-3">
-          <DashboardWeather
-            weather={dashboard.weather}
-          />
-
+          <DashboardWeather />
           <div className="lg:col-span-2">
             <DashboardNearbyHotspots />
           </div>

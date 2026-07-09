@@ -1,8 +1,6 @@
 from uuid import UUID
 
 from geoalchemy2.functions import ST_DWithin
-from geoalchemy2.shape import from_shape
-from shapely.geometry import Point
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
@@ -19,16 +17,22 @@ class HotspotRepository:
         page_size: int,
     ) -> tuple[list[Hotspot], int]:
 
-        total = self.db.scalar(
-            select(func.count()).select_from(Hotspot)
+        total = (
+            self.db.scalar(
+                select(func.count()).select_from(Hotspot)
+            )
+            or 0
         )
 
-        hotspots = self.db.scalars(
-            select(Hotspot)
-            .order_by(Hotspot.name)
-            .offset((page - 1) * page_size)
-            .limit(page_size)
-        ).all()
+        hotspots = (
+            self.db.scalars(
+                select(Hotspot)
+                .order_by(Hotspot.name)
+                .offset((page - 1) * page_size)
+                .limit(page_size)
+            )
+            .all()
+        )
 
         return hotspots, total
 
@@ -50,31 +54,45 @@ class HotspotRepository:
         radius: int,
         page: int,
         page_size: int,
-    ) -> tuple[list[Hotspot], int]:
+    ):
 
-        point = from_shape(
-            Point(longitude, latitude),
-            srid=4326,
+        search_point = func.ST_SetSRID(
+            func.ST_MakePoint(longitude, latitude),
+            4326,
         )
+
+        distance = (
+            func.ST_DistanceSphere(
+                Hotspot.coordinates,
+                search_point,
+            )
+            / 1000.0
+        ).label("distance_km")
 
         filter_clause = ST_DWithin(
             Hotspot.coordinates,
-            point,
-            radius,
+            search_point,
+            radius / 111.32,
         )
 
-        total = self.db.scalar(
-            select(func.count())
-            .select_from(Hotspot)
-            .where(filter_clause)
+        total = (
+            self.db.scalar(
+                select(func.count())
+                .select_from(Hotspot)
+                .where(filter_clause)
+            )
+            or 0
         )
 
-        hotspots = self.db.scalars(
-            select(Hotspot)
+        rows = self.db.execute(
+            select(
+                Hotspot,
+                distance,
+            )
             .where(filter_clause)
-            .order_by(Hotspot.name)
+            .order_by(distance)
             .offset((page - 1) * page_size)
             .limit(page_size)
         ).all()
 
-        return hotspots, total
+        return rows, total
