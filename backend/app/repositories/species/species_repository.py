@@ -25,8 +25,6 @@ class SpeciesRepository:
         self,
         species_id: UUID,
     ) -> Species | None:
-        """Return a South African species by ID."""
-
         query = (
             select(Species)
             .join(
@@ -52,11 +50,39 @@ class SpeciesRepository:
         self,
         filters: SpeciesExplorerFilters,
     ) -> SpeciesExplorerResponse:
-        """
-        Returns a filtered, paginated list of South African species.
-        """
+        query = self._build_base_query()
+
+        query = self._apply_filters(query, filters)
+
+        total = self.db.scalar(
+            select(func.count())
+            .select_from(query.subquery())
+        )
 
         query = (
+            query
+            .order_by(
+                Order.taxon_order,
+                Species.common_name,
+            )
+            .offset((filters.page - 1) * filters.page_size)
+            .limit(filters.page_size)
+        )
+
+        species = self.db.scalars(query).all()
+
+        return SpeciesExplorerResponse(
+            items=[
+                self._to_species_response(bird)
+                for bird in species
+            ],
+            total=total or 0,
+            page=filters.page,
+            page_size=filters.page_size,
+        )
+
+    def _build_base_query(self):
+        return (
             select(Species)
             .join(
                 SpeciesCountry,
@@ -82,6 +108,11 @@ class SpeciesRepository:
             )
         )
 
+    def _apply_filters(
+        self,
+        query,
+        filters: SpeciesExplorerFilters,
+    ):
         if filters.search:
             query = query.where(
                 or_(
@@ -91,42 +122,55 @@ class SpeciesRepository:
                 )
             )
 
-        total = self.db.scalar(
-            select(func.count())
-            .select_from(query.subquery())
-        )
-
-        query = (
-            query
-            .order_by(
-                Order.taxon_order,
-                Species.common_name,
+        if filters.order_id:
+            query = query.where(
+                Order.id == filters.order_id,
             )
-            .offset((filters.page - 1) * filters.page_size)
-            .limit(filters.page_size)
-        )
 
-        species = self.db.scalars(query).all()
-
-        items = [
-            SpeciesExplorerSpecies(
-                id=bird.id,
-                common_name=bird.common_name,
-                scientific_name=bird.scientific_name,
-                image_url=bird.image_url,
-                thumbnail_url=bird.thumbnail_url,
-                family_common_name=bird.family.common_name,
-                order_common_name=(
-                    bird.family.order.common_name
-                    or bird.family.order.name
-                ),
+        if filters.family_id:
+            query = query.where(
+                Family.id == filters.family_id,
             )
-            for bird in species
-        ]
 
-        return SpeciesExplorerResponse(
-            items=items,
-            total=total or 0,
-            page=filters.page,
-            page_size=filters.page_size,
+        if filters.country_id:
+            query = query.where(
+                Country.id == filters.country_id,
+            )
+
+        #
+        # GPS filtering
+        #
+
+        if (
+            filters.latitude is not None
+            and filters.longitude is not None
+        ):
+            # Implement PostGIS filtering later
+            pass
+
+        #
+        # Hotspot filtering
+        #
+
+        if filters.hotspot_id:
+            # Implement hotspot filtering later
+            pass
+
+        return query
+
+    @staticmethod
+    def _to_species_response(
+        bird: Species,
+    ) -> SpeciesExplorerSpecies:
+        return SpeciesExplorerSpecies(
+            id=bird.id,
+            common_name=bird.common_name,
+            scientific_name=bird.scientific_name,
+            image_url=bird.image_url,
+            thumbnail_url=bird.thumbnail_url,
+            family_common_name=bird.family.common_name,
+            order_common_name=(
+                bird.family.order.common_name
+                or bird.family.order.name
+            ),
         )

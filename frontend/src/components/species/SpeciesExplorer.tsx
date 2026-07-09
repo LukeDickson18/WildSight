@@ -1,4 +1,4 @@
-import SpeciesGroup from "../species/speciesGroup";
+import SpeciesGroup from "../species/SpeciesGroup";
 
 import type {
     SpeciesExplorerSpecies,

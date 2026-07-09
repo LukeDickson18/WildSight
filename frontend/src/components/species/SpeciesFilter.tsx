@@ -1,6 +1,7 @@
 import Card from "../ui/Card";
 import Select from "../ui/Select";
 import Switch from "../ui/Switch";
+import { radiusOptions, countryOptions, hotspotOptions } from "../../constants/speciesFilters";
 
 type Props = {
   useMyLocation: boolean;
@@ -13,22 +14,6 @@ type Props = {
   onCountryChange: (value: string) => void;
   onHotspotChange: (value: string) => void;
 };
-
-const radiusOptions = [
-  { value: "10", label: "10 km" },
-  { value: "25", label: "25 km" },
-  { value: "50", label: "50 km" },
-  { value: "100", label: "100 km" },
-  { value: "250", label: "250 km" },
-];
-
-const countryOptions = [
-  { value: "South Africa", label: "South Africa" },
-];
-
-const hotspotOptions = [
-  { value: "Any", label: "Any Hotspot" },
-];
 
 function SpeciesFilters({
   useMyLocation,
@@ -55,7 +40,9 @@ function SpeciesFilters({
             label="Radius"
             value={radius}
             options={radiusOptions}
+            disabled={!useMyLocation}
             onChange={(e) => onRadiusChange(e.target.value)}
+
           />
 
           <Select

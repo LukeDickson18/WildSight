@@ -21,10 +21,10 @@ import {
 function SpeciesPage() {
     const navigate = useNavigate();
 
-    const [filters, setFilters] =
+    const [uiFilters, setFilters] =
         useState<SpeciesFilterState>(defaultSpeciesFilters);
 
-    const [appliedFilters, setAppliedFilters] =
+    const [apiFilters, setAppliedFilters] =
         useState<SpeciesExplorerFilters>({
             page: 1,
             pageSize: 25,
@@ -34,7 +34,7 @@ function SpeciesPage() {
         data,
         isLoading,
         error,
-    } = useSpeciesExplorer(appliedFilters);
+    } = useSpeciesExplorer(apiFilters);
 
     function updateFilter<
         K extends keyof SpeciesFilterState
@@ -47,7 +47,7 @@ function SpeciesPage() {
 
     function handleSearch() {
         setAppliedFilters({
-            search: filters.search,
+            search: uiFilters.search,
             page: 1,
             pageSize: 25,
         });
@@ -62,10 +62,10 @@ function SpeciesPage() {
                 />
 
                 <SpeciesFilters
-                    useMyLocation={filters.useMyLocation}
-                    radius={filters.radius}
-                    country={filters.country}
-                    hotspot={filters.hotspot}
+                    useMyLocation={uiFilters.useMyLocation}
+                    radius={uiFilters.radius}
+                    country={uiFilters.country}
+                    hotspot={uiFilters.hotspot}
                     onUseMyLocationChange={(value) =>
                         updateFilter(
                             "useMyLocation",
@@ -84,7 +84,7 @@ function SpeciesPage() {
                 />
 
                 <SpeciesSearchBar
-                    value={filters.search}
+                    value={uiFilters.search}
                     onChange={(value) =>
                         updateFilter("search", value)
                     }
