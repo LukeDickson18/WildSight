@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 
 import SpeciesExplorer from "../components/species/SpeciesExplorer";
-import SpeciesFilters from "../components/species/SpeciesFilter";
+import SpeciesFilters from "../components/species/SpeciesExplorerFilter";
 import SpeciesSearchBar from "../components/species/SpeciesSearchBar";
 
 import Container from "../components/ui/Container";
@@ -64,8 +64,10 @@ function SpeciesPage() {
   }
 
   useEffect(() => {
+    const filters = buildExplorerFilters();
+
     setApiFilters((previous) => ({
-      ...buildExplorerFilters(),
+      ...filters,
       search: previous.search,
     }));
   }, [
@@ -89,6 +91,8 @@ function SpeciesPage() {
           useMyLocation={uiFilters.useMyLocation}
           radius={uiFilters.radius}
           country={uiFilters.countryId}
+          order={uiFilters.orderId}
+          family={uiFilters.familyId}
           hotspot={uiFilters.hotspotId}
           onUseMyLocationChange={(value) =>
             updateFilter("useMyLocation", value)
@@ -98,6 +102,12 @@ function SpeciesPage() {
           }
           onCountryChange={(value) =>
             updateFilter("countryId", value)
+          }
+          onOrderChange={(value) =>
+            updateFilter("orderId", value)
+          }
+          onFamilyChange={(value) =>
+            updateFilter("familyId", value)
           }
           onHotspotChange={(value) =>
             updateFilter("hotspotId", value)
