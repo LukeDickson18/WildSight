@@ -4,15 +4,16 @@ from .species import (
 )
 
 from .species_explorer import (
-    SpeciesExplorerGroup,
     SpeciesExplorerResponse,
     SpeciesExplorerSpecies,
 )
 
+from .species_filter import SpeciesExplorerFilters
 __all__ = [
     "SpeciesResponse",
     "SpeciesListResponse",
     "SpeciesExplorerGroup",
     "SpeciesExplorerResponse",
     "SpeciesExplorerSpecies",
+    "SpeciesExplorerFilters",
 ]

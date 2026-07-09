@@ -10,22 +10,35 @@ import SpeciesSearchBar from "../components/species/SpeciesSearchBar";
 import Container from "../components/ui/Container";
 import PageHeader from "../components/ui/PageHeader";
 
+import { useSpeciesExplorer } from "../hooks/useSpeciesExplorer";
+
 import {
     defaultSpeciesFilters,
-    type SpeciesFilters as SpeciesFiltersType,
+    type SpeciesFilterState,
+    type SpeciesExplorerFilters,
 } from "../types/speciesFilters";
 
 function SpeciesPage() {
     const navigate = useNavigate();
 
     const [filters, setFilters] =
-        useState<SpeciesFiltersType>(
-            defaultSpeciesFilters
-        );
+        useState<SpeciesFilterState>(defaultSpeciesFilters);
+
+    const [appliedFilters, setAppliedFilters] =
+        useState<SpeciesExplorerFilters>({
+            page: 1,
+            pageSize: 25,
+        });
+
+    const {
+        data,
+        isLoading,
+        error,
+    } = useSpeciesExplorer(appliedFilters);
 
     function updateFilter<
-        K extends keyof SpeciesFiltersType
-    >(key: K, value: SpeciesFiltersType[K]) {
+        K extends keyof SpeciesFilterState
+    >(key: K, value: SpeciesFilterState[K]) {
         setFilters((previous) => ({
             ...previous,
             [key]: value,
@@ -33,10 +46,11 @@ function SpeciesPage() {
     }
 
     function handleSearch() {
-        console.log(filters);
-
-        // Future:
-        // searchSpecies(filters)
+        setAppliedFilters({
+            search: filters.search,
+            page: 1,
+            pageSize: 25,
+        });
     }
 
     return (
@@ -78,6 +92,9 @@ function SpeciesPage() {
                 />
 
                 <SpeciesExplorer
+                    species={data?.items ?? []}
+                    loading={isLoading}
+                    error={error?.message ?? ""}
                     onSpeciesClick={(species) =>
                         navigate(`/species/${species.id}`)
                     }

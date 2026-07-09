@@ -1,44 +1,58 @@
 import SpeciesCard from "../species/speciesCard";
 
-import type {
-    ExplorerGroup,
-    ExplorerSpecies,
-} from "../../types/speciesExplorer";
+import type { SpeciesExplorerSpecies } from "../../types/species";
 
-interface Props {
-    group: ExplorerGroup;
-    onSpeciesClick: (species: ExplorerSpecies) => void;
-}
+type Props = {
+    orderName: string;
+    species: SpeciesExplorerSpecies[];
+    onSpeciesClick: (
+        species: SpeciesExplorerSpecies,
+    ) => void;
+};
 
-export default function SpeciesGroup({
-    group,
+function SpeciesGroup({
+    orderName,
+    species,
     onSpeciesClick,
 }: Props) {
     return (
-        <section className="space-y-4">
+        <section className="mb-16">
+            <header className="mb-8 border-b border-slate-200 pb-5">
+                <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+                    <div>
+                        <h2 className="text-3xl font-bold text-slate-900">
+                            {orderName}
+                        </h2>
+                    </div>
 
-            <div>
-                <h2 className="text-2xl font-bold">
-                    {group.name}
-                </h2>
+                    <span className="text-sm font-medium text-slate-500">
+                        {species.length} species
+                    </span>
+                </div>
+            </header>
 
-                <p className="text-slate-500 italic">
-                    {group.scientific_name}
-                </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-
-                {group.species.map((species) => (
+            <div
+                className="
+                    grid
+                    grid-cols-1
+                    gap-6
+                    sm:grid-cols-2
+                    lg:grid-cols-3
+                    xl:grid-cols-4
+                "
+            >
+                {species.map((bird) => (
                     <SpeciesCard
-                        key={species.id}
-                        species={species}
-                        onClick={onSpeciesClick}
+                        key={bird.id}
+                        species={bird}
+                        onClick={() =>
+                            onSpeciesClick(bird)
+                        }
                     />
                 ))}
-
             </div>
-
         </section>
     );
 }
+
+export default SpeciesGroup;

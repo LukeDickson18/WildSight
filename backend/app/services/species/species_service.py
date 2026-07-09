@@ -3,30 +3,22 @@ from uuid import UUID
 from fastapi import HTTPException, status
 
 from app.repositories.species.species_repository import SpeciesRepository
-from app.schemas.species.species import SpeciesListResponse, SpeciesResponse
-from app.schemas.species import SpeciesExplorerResponse
+from app.schemas.species import (
+    SpeciesExplorerFilters,
+    SpeciesExplorerResponse,
+)
+from app.schemas.species.species import SpeciesResponse
 
 
 class SpeciesService:
     def __init__(self, repository: SpeciesRepository):
         self.repository = repository
 
-    def get_species(
+    def get_species_explorer(
         self,
-        page: int,
-        page_size: int,
-    ) -> SpeciesListResponse:
-        species, total = self.repository.get_species(
-            page=page,
-            page_size=page_size,
-        )
-
-        return SpeciesListResponse(
-            items=species,
-            total=total,
-            page=page,
-            page_size=page_size,
-        )
+        filters: SpeciesExplorerFilters,
+    ) -> SpeciesExplorerResponse:
+        return self.repository.get_species_explorer(filters)
 
     def get_species_by_id(
         self,
@@ -41,25 +33,3 @@ class SpeciesService:
             )
 
         return species
-
-    def search_species(
-        self,
-        query: str,
-        page: int,
-        page_size: int,
-    ) -> SpeciesListResponse:
-        species, total = self.repository.search(
-            query_text=query,
-            page=page,
-            page_size=page_size,
-        )
-
-        return SpeciesListResponse(
-            items=species,
-            total=total,
-            page=page,
-            page_size=page_size,
-        )
-    
-    def get_species_explorer(self) -> SpeciesExplorerResponse:
-        return self.repository.get_species_explorer()

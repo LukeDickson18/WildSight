@@ -9,7 +9,7 @@ from app.models.order import Order
 from app.models.species import Species
 from app.models.species_country import SpeciesCountry
 from app.schemas.species import (
-    SpeciesExplorerGroup,
+    SpeciesExplorerFilters,
     SpeciesExplorerResponse,
     SpeciesExplorerSpecies,
 )
@@ -20,45 +20,6 @@ COUNTRY_CODE = "ZA"
 class SpeciesRepository:
     def __init__(self, db: Session):
         self.db = db
-
-    def get_species(
-        self,
-        page: int,
-        page_size: int,
-    ) -> tuple[list[Species], int]:
-        """Return a paginated list of South African species."""
-
-        base_query = (
-            select(Species)
-            .join(
-                SpeciesCountry,
-                Species.id == SpeciesCountry.species_id,
-            )
-            .join(
-                Country,
-                Country.id == SpeciesCountry.country_id,
-            )
-            .where(Country.iso_code == COUNTRY_CODE)
-        )
-
-        total = self.db.scalar(
-            select(func.count())
-            .select_from(base_query.subquery())
-        )
-
-        query = (
-            base_query
-            .options(
-                selectinload(Species.family).selectinload(Family.order)
-            )
-            .order_by(Species.common_name)
-            .offset((page - 1) * page_size)
-            .limit(page_size)
-        )
-
-        species = self.db.scalars(query).all()
-
-        return species, total or 0
 
     def get_by_id(
         self,
@@ -87,58 +48,12 @@ class SpeciesRepository:
 
         return self.db.scalar(query)
 
-    def search(
+    def get_species_explorer(
         self,
-        query_text: str,
-        page: int,
-        page_size: int,
-    ) -> tuple[list[Species], int]:
-        """Search South African species."""
-
-        filter_clause = or_(
-            Species.common_name.ilike(f"%{query_text}%"),
-            Species.scientific_name.ilike(f"%{query_text}%"),
-            Species.ebird_code.ilike(f"%{query_text}%"),
-        )
-
-        base_query = (
-            select(Species)
-            .join(
-                SpeciesCountry,
-                Species.id == SpeciesCountry.species_id,
-            )
-            .join(
-                Country,
-                Country.id == SpeciesCountry.country_id,
-            )
-            .where(
-                Country.iso_code == COUNTRY_CODE,
-                filter_clause,
-            )
-        )
-
-        total = self.db.scalar(
-            select(func.count())
-            .select_from(base_query.subquery())
-        )
-
-        query = (
-            base_query
-            .options(
-                selectinload(Species.family).selectinload(Family.order)
-            )
-            .order_by(Species.common_name)
-            .offset((page - 1) * page_size)
-            .limit(page_size)
-        )
-
-        species = self.db.scalars(query).all()
-
-        return species, total or 0
-
-    def get_species_explorer(self) -> SpeciesExplorerResponse:
+        filters: SpeciesExplorerFilters,
+    ) -> SpeciesExplorerResponse:
         """
-        Returns all South African species grouped by taxonomic order.
+        Returns a filtered, paginated list of South African species.
         """
 
         query = (
@@ -165,41 +80,53 @@ class SpeciesRepository:
             .where(
                 Country.iso_code == COUNTRY_CODE,
             )
+        )
+
+        if filters.search:
+            query = query.where(
+                or_(
+                    Species.common_name.ilike(f"%{filters.search}%"),
+                    Species.scientific_name.ilike(f"%{filters.search}%"),
+                    Species.ebird_code.ilike(f"%{filters.search}%"),
+                )
+            )
+
+        total = self.db.scalar(
+            select(func.count())
+            .select_from(query.subquery())
+        )
+
+        query = (
+            query
             .order_by(
                 Order.taxon_order,
                 Species.common_name,
             )
+            .offset((filters.page - 1) * filters.page_size)
+            .limit(filters.page_size)
         )
 
         species = self.db.scalars(query).all()
 
-        groups: list[SpeciesExplorerGroup] = []
-        current_group: SpeciesExplorerGroup | None = None
-        current_order_id: UUID | None = None
-
-        for bird in species:
-            order = bird.family.order
-
-            if current_order_id != order.id:
-                current_order_id = order.id
-
-                current_group = SpeciesExplorerGroup(
-                    name=order.common_name or order.name,
-                    scientific_name=order.name,
-                    species=[],
-                )
-
-                groups.append(current_group)
-
-            current_group.species.append(
-                SpeciesExplorerSpecies(
-                    id=bird.id,
-                    common_name=bird.common_name,
-                    image_url=bird.image_url,
-                    thumbnail_url=bird.thumbnail_url,
-                )
+        items = [
+            SpeciesExplorerSpecies(
+                id=bird.id,
+                common_name=bird.common_name,
+                scientific_name=bird.scientific_name,
+                image_url=bird.image_url,
+                thumbnail_url=bird.thumbnail_url,
+                family_common_name=bird.family.common_name,
+                order_common_name=(
+                    bird.family.order.common_name
+                    or bird.family.order.name
+                ),
             )
+            for bird in species
+        ]
 
         return SpeciesExplorerResponse(
-            groups=groups,
+            items=items,
+            total=total or 0,
+            page=filters.page,
+            page_size=filters.page_size,
         )

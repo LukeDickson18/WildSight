@@ -53,7 +53,7 @@ class WeatherClient:
         try:
             with httpx.Client(timeout=self.timeout) as client:
                 response = client.get(
-                    settings.open_meteo_base_url,
+                    settings.open_meteo_archive_url,
                     params=params,
                 )
                 response.raise_for_status()

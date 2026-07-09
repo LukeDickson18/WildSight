@@ -1,57 +1,25 @@
-import { useEffect, useState } from "react";
-
-import { getSpeciesExplorer } from "../../api/speciesExplorer";
-
 import SpeciesGroup from "../species/speciesGroup";
 
 import type {
-    ExplorerGroup,
-    ExplorerSpecies,
-} from "../../types/speciesExplorer";
+    SpeciesExplorerSpecies,
+} from "../../types/species";
 
 interface Props {
-    onSpeciesClick: (species: ExplorerSpecies) => void;
+    species: SpeciesExplorerSpecies[];
+    loading: boolean;
+    error: string;
+
+    onSpeciesClick: (
+        species: SpeciesExplorerSpecies,
+    ) => void;
 }
 
 export default function SpeciesExplorer({
+    species,
+    loading,
+    error,
     onSpeciesClick,
 }: Props) {
-
-    const [groups, setGroups] = useState<ExplorerGroup[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-
-    useEffect(() => {
-
-        async function loadSpecies() {
-
-            try {
-
-                const response =
-                    await getSpeciesExplorer();
-
-                setGroups(response.groups);
-
-            } catch (err) {
-
-                setError(
-                    err instanceof Error
-                        ? err.message
-                        : "Unknown error",
-                );
-
-            } finally {
-
-                setLoading(false);
-
-            }
-
-        }
-
-        loadSpecies();
-
-    }, []);
-
     if (loading) {
         return (
             <p className="py-8 text-center">
@@ -68,17 +36,35 @@ export default function SpeciesExplorer({
         );
     }
 
+    const groups = species.reduce<
+        Record<string, SpeciesExplorerSpecies[]>
+    >((accumulator, current) => {
+        const order =
+            current.order_common_name ?? "Unknown";
+
+        if (!accumulator[order]) {
+            accumulator[order] = [];
+        }
+
+        accumulator[order].push(current);
+
+        return accumulator;
+    }, {});
+
     return (
         <div className="space-y-12">
-
-            {groups.map((group) => (
-                <SpeciesGroup
-                    key={group.scientific_name}
-                    group={group}
-                    onSpeciesClick={onSpeciesClick}
-                />
-            ))}
-
+            {Object.entries(groups).map(
+                ([orderName, species]) => (
+                    <SpeciesGroup
+                        key={orderName}
+                        orderName={orderName}
+                        species={species}
+                        onSpeciesClick={
+                            onSpeciesClick
+                        }
+                    />
+                ),
+            )}
         </div>
     );
 }
